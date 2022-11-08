@@ -13,21 +13,26 @@ class CustomAuthController extends Controller
 {
 	protected $userService;
 
+	private string $guard;
+
     public function __construct( UserService $userService ) {
         $this->userService = $userService;
+        $this->guard = 'web';
     }
 
 	public function index() {
 		return view('auth.login');
 	}
 
-	public function customLogin(CustomLoginRequest $request) {
-		$credentials = $request->only('email', 'password');
-		if (Auth::attempt($credentials)) {
-			return redirect()->intended('dashboard')->withSuccess( __('user.logged_in') );
+	public function customLogin(Request $request, CustomLoginRequest $customLoginRequest) {
+		$credentials = $customLoginRequest->only('email', 'password');
+		if (Auth::guard($this->guard)->attempt($credentials)) {
+			$request->session()->regenerate();
+
+			return redirect()->intended('dashboard')->withSuccess( 'logged in' );
 		}
 
-		return redirect("login")->withError( __('user.error_account_or_password') );
+		return redirect("login")->withError( 'Email or password invalid' );
 	}
 
 	public function registration() {
@@ -35,26 +40,28 @@ class CustomAuthController extends Controller
 	}
 
 	public function customRegistration(CustomRegistrationRequest $request) {
+		// create user
 		$result = $this->userService->create($request->all());
-		if($result->id) {
-			return redirect("login")->withSuccess( __('user.registration_success') );
-		} else {
-			return redirect("registration")->withError( __('user.error_insert_failure') );
-		}
+
+		return redirect("login")->withSuccess( 'Registration success, please login' );
 	}
 
 	public function dashboard() {
-		if(Auth::check()) {
+		// check login status
+		if(Auth::guard($this->guard)->check()) {
 			return view('auth.dashboard');
 		}
 
-		return redirect("login")->withError( __('user.error_access_not_allowed') );
+		return redirect("login")->withError( 'Access denied' );
 	}
 
-	public function logOut() {
-		Session::flush();
-		Auth::logout();
+	public function logOut( Request $request ) {
+		Auth::guard($this->guard)->logout();
 
-		return Redirect('login')->withSuccess( __('user.logged_out') );
+		$request->session()->invalidate();
+
+		$request->session()->regenerateToken();
+
+		return Redirect('login')->withSuccess( 'logged out' );
 	}
 }

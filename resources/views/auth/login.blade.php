@@ -5,12 +5,12 @@
 		<div class="row justify-content-center">
 			<div class="col-md-4">
 				<div class="card">
-					<h3 class="card-header text-center">{{ __('user.login') }}</h3>
+					<h3 class="card-header text-center">Login</h3>
 					<div class="card-body">
 						<form method="POST" action="{{ url('custom-login') }}">
 							@csrf
 							<div class="form-group mb-3">
-								<input type="text" placeholder="Email" id="email" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
+								<input type="text" placeholder="Email" id="email" class="form-control" name="email" required autofocus>
 								@if ($errors->has('email'))
 								<span class="text-danger">{{ $errors->first('email') }}</span>
 								@endif
@@ -22,7 +22,7 @@
 								@endif
 							</div>
 							<div class="d-grid mx-auto">
-								<button type="submit" class="btn btn-dark btn-block">{{ __('user.signin') }}</button>
+								<button type="submit" class="btn btn-dark btn-block">Sign in</button>
 							</div>
 						</form>
 					</div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{ __('layout.title') }}</title>
+	<title>Demo</title>
 	<!-- js -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
 	<!-- css -->
@@ -11,7 +11,7 @@
 <body>
 	<nav class="navbar navbar-light navbar-expand-lg mb-1">
 		<div class="container">
-			<a class="navbar-brand mr-auto" href="javascript:void(0);">{{ __('layout.title') }}</a>
+			<a class="navbar-brand mr-auto" href="javascript:void(0);">Demo</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
 				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -20,14 +20,14 @@
 				<ul class="navbar-nav">
 					@guest
 					<li class="nav-item">
-						<a class="nav-link" href="{{ url('login') }}">{{ __('layout.login') }}</a>
+						<a class="nav-link" href="{{ url('login') }}">Login</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="{{ url('registration') }}">{{ __('layout.register') }}</a>
+						<a class="nav-link" href="{{ url('registration') }}">Register</a>
 					</li>
 					@else
 					<li class="nav-item">
-						<a class="nav-link" href="{{ url('logout') }}">{{ __('layout.logout') }}</a>
+						<a class="nav-link" href="{{ url('logout') }}">Logout</a>
 					</li>
 					@endguest
 				</ul>

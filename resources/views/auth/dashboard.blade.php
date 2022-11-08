@@ -5,7 +5,7 @@
 		<div class="row justify-content-center">
 			<div class="col-md-4">
 				<div class="card">
-					<h3 class="card-header text-center">{{ __('user.info') }}</h3>
+					<h3 class="card-header text-center">User Info</h3>
 					<div class="card-body">
 						<div class="form-group mb-3">
 							Name : {{Auth::user()->name;}}

@@ -5,7 +5,7 @@
 		<div class="row justify-content-center">
 			<div class="col-md-4">
 				<div class="card">
-					<h3 class="card-header text-center">{{ __('user.register') }}</h3>
+					<h3 class="card-header text-center">Register User</h3>
 					<div class="card-body">
 						<form action="{{ url('custom-registration') }}" method="POST">
 							@csrf
@@ -28,7 +28,7 @@
 								@endif
 							</div>
 							<div class="d-grid mx-auto">
-								<button type="submit" class="btn btn-dark btn-block">{{ __('user.signup') }}</button>
+								<button type="submit" class="btn btn-dark btn-block">Sign up</button>
 							</div>
 						</form>
 					</div>
