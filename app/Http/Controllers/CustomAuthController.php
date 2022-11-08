@@ -47,12 +47,7 @@ class CustomAuthController extends Controller
 	}
 
 	public function dashboard() {
-		// check login status
-		if(Auth::guard($this->guard)->check()) {
-			return view('auth.dashboard');
-		}
-
-		return redirect("login")->withError( 'Access denied' );
+		return view('auth.dashboard');
 	}
 
 	public function logOut( Request $request ) {
