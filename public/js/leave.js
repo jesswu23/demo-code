@@ -15,7 +15,7 @@ $(document).ready(function() {
 		var reason = $("#reason").val();
 		var user_id = $("#user_id").val();
 
-		$.post('/api/store', {start_date: start_date, end_date: end_date, type: type, reason: reason, user_id: user_id}, function(data, textStatus, xhr) {
+		$.post('/api/leave/store', {start_date: start_date, end_date: end_date, type: type, reason: reason, user_id: user_id}, function(data, textStatus, xhr) {
 			/*optional stuff to do after success */
 			if(data.status == 'error') {
 				alert(data.message);
