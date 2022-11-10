@@ -31,4 +31,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    public function files(){
+        return $this->hasMany( UserFile::class );
+    }
 }
