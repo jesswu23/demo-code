@@ -7,7 +7,7 @@
 				<div class="card">
 					<h3 class="card-header text-center">Login</h3>
 					<div class="card-body">
-						<form method="POST" action="{{ url('custom-login') }}">
+						<form method="POST" action="{{ url('custom_login') }}">
 							@csrf
 							<div class="form-group mb-3">
 								<input type="text" placeholder="Email" id="email" class="form-control" name="email" required autofocus>

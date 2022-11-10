@@ -46,10 +46,6 @@ class CustomAuthController extends Controller
 		return redirect("login")->withSuccess( 'Registration success, please login' );
 	}
 
-	public function dashboard() {
-		return view('auth.dashboard');
-	}
-
 	public function logOut( Request $request ) {
 		Auth::guard($this->guard)->logout();
 

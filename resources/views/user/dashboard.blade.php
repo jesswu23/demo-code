@@ -16,6 +16,18 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="col-md-6">
+				<div class="card">
+					<h3 class="card-header text-center">Function</h3>
+					<div class="card-body">
+						<div class="d-grid gap-2 col-6 mx-auto">
+							<a href="{{ url('upload') }}" class="btn btn-primary">Upload file</a>
+							<a href="{{ url('leave') }}" class="btn btn-primary">Leave</a>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </main>
