@@ -4,6 +4,7 @@
 	<title>Demo</title>
 	<!-- js -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>
 	<!-- css -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/main.css') }}">
@@ -11,7 +12,7 @@
 <body>
 	<nav class="navbar navbar-light navbar-expand-lg mb-1">
 		<div class="container">
-			<a class="navbar-brand mr-auto" href="javascript:void(0);">Demo</a>
+			<a class="navbar-brand mr-auto" href="{{ url('dashboard') }}">Demo</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
 				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
