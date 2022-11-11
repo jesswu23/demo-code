@@ -22,7 +22,7 @@
 					<h3 class="card-header text-center">Function</h3>
 					<div class="card-body">
 						<div class="d-grid gap-2 col-6 mx-auto">
-							<a href="{{ url('import') }}" class="btn btn-primary">Import file</a>
+							<a href="{{ url('import') }}" class="btn btn-primary">Import calendar</a>
 							<a href="{{ url('upload') }}" class="btn btn-primary">Upload file</a>
 							<a href="{{ url('leave') }}" class="btn btn-primary">Leave Calendar</a>
 							<a href="{{ url('leave/create') }}" class="btn btn-primary">Leave apply</a>
