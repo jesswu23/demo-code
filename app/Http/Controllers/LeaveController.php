@@ -73,7 +73,10 @@ class LeaveController extends Controller
 	 */
 	public function edit($id)
 	{
-		//
+		$model = $result = $this->leaveListService->get( $id );
+
+        return view('leave/edit')
+                ->with('model', $model);
 	}
 
 	/**
@@ -85,7 +88,9 @@ class LeaveController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		//
+		$this->leaveListService->update( $id, $request->all() );
+
+        return redirect('/leave/edit/' . $id)->withSuccess('Update leave data success.');
 	}
 
 	/**

@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('events', 'events');
 		Route::get('create', 'create');
 		Route::post('store', 'store');
+		Route::get('edit/{id}', 'edit');
+		Route::post('update/{id}', 'update');
 	});
 
 	Route::prefix('calendar')->controller(CalendarController::class)->group(function () {

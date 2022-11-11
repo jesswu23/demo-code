@@ -79,7 +79,7 @@ class CalendarController extends Controller
      */
     public function update(Request $request, $date)
     {
-        $model = $result = $this->calendarService->updateByDate( $date, $request->all() );
+        $this->calendarService->updateByDate( $date, $request->all() );
 
         return redirect('/leave')->withSuccess('Update calendar success.');
     }
