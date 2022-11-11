@@ -19,7 +19,3 @@ use App\Http\Controllers\Api\LeaveController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-Route::prefix('leave')->group(function () {
-	Route::post('store', [LeaveController::class, 'store']);
-});
