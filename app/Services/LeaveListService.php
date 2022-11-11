@@ -41,6 +41,24 @@ Class LeaveListService
 		return $model;
 	}
 
+	public function updateByDate( $date = null)
+	{
+		// Get data after this date
+		$date = date_create( $date );
+		$date = date_format($date,"Y-m-d");
+
+		$models = $this->leaveListRepository->getByDate( $date );
+		foreach ($models as $key => $model) {
+			$total_hours = $this->getLeaveHours( $model['start_at'], $model['end_at']);
+			$params['hours'] = $total_hours;
+
+			$this->leaveListRepository->update($model->id, $params);
+		}
+
+		return true;
+
+	}
+
 	public function get( $id = null)
 	{
 		if( !$id ) {
