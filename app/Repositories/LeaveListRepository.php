@@ -10,4 +10,11 @@ class LeaveListRepository
     {
         return LeaveList::create($params);
     }
+
+    public function lists()
+	{
+		$models = LeaveList::get();
+
+		return $models;
+	}
 }

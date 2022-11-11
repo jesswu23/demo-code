@@ -3,34 +3,83 @@
 namespace App\Services;
 
 use App\Repositories\LeaveListRepository;
+use App\Repositories\CalendarRepository;
 
 Class LeaveListService
 {
-    protected $leaveListRepository;
+	protected $leaveListRepository;
+	protected $calendarRepository;
 
-    public function __construct( LeaveListRepository $leaveListRepository ) {
-        $this->leaveListRepository = $leaveListRepository;
-    }
+	public function __construct( LeaveListRepository $leaveListRepository, CalendarRepository $calendarRepository ) {
+		$this->leaveListRepository = $leaveListRepository;
+		$this->calendarRepository = $calendarRepository;
+	}
 
-    public function create(array $params)
-    {
+	public function create(array $params)
+	{
+		$start_date = date_create($params['start_date']);
+		$end_date = date_create($params['end_date']);
 
-        $start_at = strtotime($params['start_date']);
-        $end_at = strtotime($params['end_date']);
+		$diff = date_diff($start_date, $end_date);
+		$diff_day = $diff->d;
+		$diff_hour = $diff->h;
 
-        $hours = ($end_at - $start_at) / 60 / 60;
+		// Check if it's a holiday
+		$start_date = date_format( $start_date, "Ymd" ); // The database format is YYYYMMDD
+		$end_date = date_format( $end_date, "Ymd" ); // The database format is YYYYMMDD
 
-        if($hours < 4) {
-            return ['status' => 'error', 'message' => 'Take at least four hours of leave.'];
-        }
+		$checkResult = $this->calendarRepository->getHolidayByDateRange( $start_date, $end_date );
+		$holiday_hours = ( $diff_day > 0 ) ? ($checkResult->count() * 7) : 0;
 
-        return $this->leaveListRepository->create([
-            'user_id' => $params['user_id'],
-            'start_at' => $params['start_date'],
-            'end_at' => $params['end_date'],
-            'hours' => $hours,
-            'type' => $params['type'],
-            'reason' => $params['reason']
-        ]);
-    }
+		$hour = $diff->h;
+		if($diff_hour < 4) {
+			return ['status' => 'error', 'message' => 'Take at least four hours of leave.'];
+		} else if( $diff_day > 0 && $diff_hour < 9){
+			$hour = $diff_hour;
+		} else if($diff_day == 0 && $diff_hour > 9) {
+			// minus 18:00 ~ 9:00 hour
+			$hour = $diff_hour - 15;
+		}
+
+		$total_hours = ($diff_day * 7) + $hour - $holiday_hours;
+
+		$result = $this->leaveListRepository->create([
+			'user_id' => $params['user_id'],
+			'start_at' => $params['start_date'],
+			'end_at' => $params['end_date'],
+			'hours' => $total_hours,
+			'type' => $params['type'],
+			'reason' => $params['reason']
+		]);
+
+		return ['status' => 'success', 'message' => 'Apply success.'];
+	}
+
+	public function events()
+	{
+		$events = [];
+
+		// Get calendar event
+		$models = $this->calendarRepository->events();
+		foreach ($models as $key => $model) {
+			$tmp['title'] = $model->memo;
+
+			$date = date_create( $model->date );
+			$tmp['start'] = date_format($date,"Y-m-d");
+
+			$events[] = $tmp;
+		}
+
+		// Get leave list
+		$models = $this->leaveListRepository->lists();
+		foreach ($models as $key => $model) {
+			$tmp['title'] = $model->user->name;
+			$tmp['start'] = $model->start_at;
+			$tmp['end'] = $model->end_at;
+
+			$events[] = $tmp;
+		}
+
+		return response()->json($events, 200);
+	}
 }

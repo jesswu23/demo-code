@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\ImportController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\LeaveController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,19 +20,43 @@ use App\Http\Controllers\UploadController;
 */
 
 Route::middleware(['auth'])->group(function () {
-	Route::get('logout', [CustomAuthController::class, 'logOut']);
+	Route::controller(CustomAuthController::class)->group(function () {
+		Route::get('logout', 'logOut');
+	});
 
-	Route::get('dashboard', [UserController::class, 'dashboard']);
-	Route::get('leave', [UserController::class, 'leave']);
-	Route::get('upload', [UserController::class, 'upload']);
-	Route::post('upload_file', [UploadController::class, 'uploadFile']);
+	Route::controller(UploadController::class)->group(function () {
+		Route::post('upload_file', 'uploadFile');
+	});
 
+	Route::controller(ImportController::class)->group(function () {
+		Route::post('import_file', 'importFile');
+	});
+
+	Route::controller(UserController::class)->group(function () {
+		Route::get('dashboard', 'dashboard');
+		Route::get('leave', 'leave');
+		Route::get('upload', 'upload');
+		Route::get('import', 'import');
+	});
+
+	Route::prefix('leave')->controller(LeaveController::class)->group(function () {
+		Route::get('events', 'events');
+		Route::get('create', 'create');
+		Route::post('store', 'store');
+	});
+
+	Route::prefix('calendar')->controller(CalendarController::class)->group(function () {
+		Route::get('edit/{date}', 'edit');
+		Route::post('update/{date}', 'update');
+	});
 });
 
-Route::get('login', [CustomAuthController::class, 'index'])->name('login');
-Route::post('custom_login', [CustomAuthController::class, 'customLogin']);
+Route::controller(CustomAuthController::class)->group(function () {
+	Route::get('login', 'index')->name('login');
+	Route::post('custom_login', 'customLogin');
 
-Route::get('registration', [CustomAuthController::class, 'registration']);
-Route::post('custom_registration', [CustomAuthController::class, 'customRegistration']);
+	Route::get('registration', 'registration');
+	Route::post('custom_registration', 'customRegistration');
 
-Route::get('/', [CustomAuthController::class, 'index']);
+	Route::get('/', 'index');
+});

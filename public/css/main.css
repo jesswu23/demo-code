@@ -1,3 +1,8 @@
 .navbar{
 	background-color: #e3f2fd;
 }
+
+#calendar {
+  max-width: 1100px;
+  margin: 40px auto;
+}
