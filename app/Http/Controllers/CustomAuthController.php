@@ -21,6 +21,10 @@ class CustomAuthController extends Controller
     }
 
 	public function index() {
+		if(Auth::guard($this->guard)->user()) {
+			return redirect('dashboard');
+		}
+
 		return view('auth.login');
 	}
 

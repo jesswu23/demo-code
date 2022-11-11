@@ -17,4 +17,12 @@ class UserController extends Controller
 	public function leave() {
 		return view('leave.index');
 	}
+
+	public function import() {
+		return view('import.index');
+	}
+
+	public function calendar() {
+		return view('calendar.index');
+	}
 }
