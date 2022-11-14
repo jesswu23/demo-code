@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('date')->unique();
             $table->string('week', 10);
-            $table->enum('is_holiday', [0, 2])->comment('0:非假日、2:假日');
+            $table->boolean('is_holiday')->comment('0:非假日、2:假日');
             $table->string('memo', 100)->nullable();
             $table->timestamps();
         });
