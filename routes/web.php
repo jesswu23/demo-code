@@ -44,12 +44,12 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('create', 'create');
 		Route::post('store', 'store');
 		Route::get('edit/{id}', 'edit');
-		Route::post('update/{id}', 'update');
+		Route::put('update/{id}', 'update');
 	});
 
 	Route::prefix('calendar')->controller(CalendarController::class)->group(function () {
 		Route::get('edit/{date}', 'edit');
-		Route::post('update/{date}', 'update');
+		Route::put('update/{date}', 'update');
 	});
 });
 

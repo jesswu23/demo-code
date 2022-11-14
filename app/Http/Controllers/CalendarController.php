@@ -66,11 +66,11 @@ class CalendarController extends Controller
      */
     public function edit(string $date)
     {
-        $model = $this->calendarService->getByDate($date);
+        $calendar = $this->calendarService->getByDate($date);
 
         return view('calendar/edit')
                 ->with('date', $date)
-                ->with('model', $model);
+                ->with('calendar', $calendar);
     }
 
     /**

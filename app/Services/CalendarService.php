@@ -12,7 +12,7 @@ Class CalendarService
 		$this->calendarRepository = $calendarRepository;
 	}
 
-	public function getByDate(int $date)
+	public function getByDate(string $date)
 	{
 		$date = date_create($date);
 		$date = date_format($date, "Ymd"); // The database format is YYYYMMDD
@@ -21,7 +21,7 @@ Class CalendarService
 		return $calendar;
 	}
 
-	public function updateByDate(int $date, array $params)
+	public function updateByDate(string $date, array $params)
 	{
 		$date = date_create($date);
 		$date = date_format($date, "Ymd"); // The database format is YYYYMMDD
