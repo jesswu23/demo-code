@@ -11,7 +11,8 @@ Class UploadService
 {
 	protected $uploadRepository;
 
-	public function __construct( UploadRepository $uploadRepository ) {
+	public function __construct(UploadRepository $uploadRepository)
+	{
 		$this->uploadRepository = $uploadRepository;
 	}
 
@@ -23,9 +24,9 @@ Class UploadService
 		]);
 	}
 
-	public function handleUploadedFile($uploadFile)
+	public function handleUploadedFile(object $uploadFile)
 	{
-		if ( !is_null( $uploadFile ) ) {
+		if (!is_null($uploadFile)) {
 			$extension = $uploadFile->extension();
 			$dir = '/' . date('Y') . '/' . $extension;
 			$fullFilePath = public_path('files') . $dir;
@@ -33,7 +34,7 @@ Class UploadService
 			$fileName = date('Ymd') . '_' . time() . '.' . $extension;
 
 			// move file
-			$uploadFile->move( $fullFilePath, $fileName );
+			$uploadFile->move($fullFilePath, $fileName);
 
 			return $this->create(['file' => $relativeFilePath . '/' . $fileName]);
 		}

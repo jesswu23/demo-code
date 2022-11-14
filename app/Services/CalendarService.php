@@ -8,33 +8,25 @@ Class CalendarService
 {
 	protected $calendarRepository;
 
-	public function __construct( CalendarRepository $calendarRepository ) {
+	public function __construct(CalendarRepository $calendarRepository) {
 		$this->calendarRepository = $calendarRepository;
 	}
 
-	public function getByDate( $date = null )
+	public function getByDate(int $date)
 	{
-		if( !$date ) {
-			return false;
-		}
+		$date = date_create($date);
+		$date = date_format($date, "Ymd"); // The database format is YYYYMMDD
+		$calendar = $this->calendarRepository->getByDate($date);
 
-		$date = date_create( $date );
-		$date = date_format( $date, "Ymd" ); // The database format is YYYYMMDD
-		$model = $this->calendarRepository->getByDate( $date );
-
-		return $model;
+		return $calendar;
 	}
 
-	public function updateByDate( $date = null, array $params)
+	public function updateByDate(int $date, array $params)
 	{
-		if( !$date ) {
-			return false;
-		}
+		$date = date_create($date);
+		$date = date_format($date, "Ymd"); // The database format is YYYYMMDD
+		$calendar = $this->calendarRepository->updateByDate($date, $params);
 
-		$date = date_create( $date );
-		$date = date_format( $date, "Ymd" ); // The database format is YYYYMMDD
-		$model = $this->calendarRepository->updateByDate( $date, $params );
-
-		return $model;
+		return $calendar;
 	}
 }

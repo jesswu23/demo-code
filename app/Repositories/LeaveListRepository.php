@@ -11,56 +11,56 @@ class LeaveListRepository
         return LeaveList::create($params);
     }
 
-    public function get( $id = null )
+    public function get(int $id)
     {
-    	$model = LeaveList::find( $id );
+    	$leaveList = LeaveList::find( $id );
 
-    	return $model;
+    	return $leaveList;
     }
 
-    public function update( $id = null, array $params )
+    public function update(int $id, array $params )
     {
-        $model = $this->get( $id );
+        $leaveList = $this->get( $id );
         if( isset($params['start_date']) ){
-            $model->start_at = $params['start_date'];
+            $leaveList->start_at = $params['start_date'];
         }
 
         if( isset($params['end_date']) ){
-            $model->end_at = $params['end_date'];
+            $leaveList->end_at = $params['end_date'];
         }
 
         if( isset($params['hours']) ){
-            $model->hours = $params['hours'];
+            $leaveList->hours = $params['hours'];
         }
 
         if( isset($params['status']) ){
-            $model->status = $params['status'];
+            $leaveList->status = $params['status'];
         }
 
         if( isset($params['type']) ){
-            $model->type = $params['type'];
+            $leaveList->type = $params['type'];
         }
 
         if( isset($params['reason']) ){
-            $model->reason = $params['reason'];
+            $leaveList->reason = $params['reason'];
         }
 
-        $model->save();
+        $leaveList->save();
 
-        return $model;
+        return $leaveList;
     }
 
-    public function getByDate( $date = null)
+    public function getByDate(string $date)
     {
-        $models = LeaveList::where('start_at', '<=', $date)->where('end_at', '>=', $date)->get();
+        $leaveLists = LeaveList::where('start_at', '<=', $date)->where('end_at', '>=', $date)->get();
 
-        return $models;
+        return $leaveLists;
     }
 
     public function lists()
 	{
-		$models = LeaveList::get();
+		$leaveLists = LeaveList::get();
 
-		return $models;
+		return $leaveLists;
 	}
 }

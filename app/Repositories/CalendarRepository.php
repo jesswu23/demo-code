@@ -6,34 +6,34 @@ use App\Models\Calendar;
 
 class CalendarRepository
 {
-	public function getByDate( $date = null )
+	public function getByDate(int $date)
 	{
-		$model = Calendar::where('date', '=', $date)->first();
+		$calendar = Calendar::where('date', '=', $date)->first();
 
-		return $model;
+		return $calendar;
 	}
 
-	public function updateByDate( $date = null, array $params )
+	public function updateByDate(int $date, array $params)
 	{
-		$model = $this->getByDate( $date );
-		$model->is_holiday = $params['is_holiday'];
-		$model->memo = $params['memo'];
-		$model->save();
+		$calendar = $this->getByDate( $date );
+		$calendar->is_holiday = $params['is_holiday'];
+		$calendar->memo = $params['memo'];
+		$calendar->save();
 
-		return $model;
+		return $calendar;
 	}
 
-	public function getHolidayByDateRange( $start_date = null, $end_date = null)
+	public function getHolidayByDateRange(int $start_date, int $end_date)
 	{
-		$models = Calendar::where('date', '>=', $start_date)->where('date', '<=', $end_date)->where('is_holiday', '=', '2')->get();
+		$calendars = Calendar::where('date', '>=', $start_date)->where('date', '<=', $end_date)->where('is_holiday', '=', '2')->get();
 
-		return $models;
+		return $calendars;
 	}
 
 	public function events()
 	{
-		$models = Calendar::where('is_holiday', '=', '2')->whereNotNull('memo')->get();
+		$calendars = Calendar::where('is_holiday', '=', '2')->whereNotNull('memo')->get();
 
-		return $models;
+		return $calendars;
 	}
 }

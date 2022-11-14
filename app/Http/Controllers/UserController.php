@@ -6,23 +6,28 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function dashboard() {
+    public function dashboard()
+    {
 		return view('user.dashboard');
 	}
 
-	public function upload(){
+	public function upload()
+	{
 		return view('upload.index');
 	}
 
-	public function leave() {
+	public function leave()
+	{
 		return view('leave.index');
 	}
 
-	public function import() {
+	public function import()
+	{
 		return view('import.index');
 	}
 
-	public function calendar() {
+	public function calendar()
+	{
 		return view('calendar.index');
 	}
 }

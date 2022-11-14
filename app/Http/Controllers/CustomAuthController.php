@@ -15,12 +15,14 @@ class CustomAuthController extends Controller
 
 	private string $guard;
 
-    public function __construct( UserService $userService ) {
+    public function __construct(UserService $userService)
+    {
         $this->userService = $userService;
         $this->guard = 'web';
     }
 
-	public function index() {
+	public function index()
+	{
 		if(Auth::guard($this->guard)->user()) {
 			return redirect('dashboard');
 		}
@@ -28,7 +30,8 @@ class CustomAuthController extends Controller
 		return view('auth.login');
 	}
 
-	public function customLogin(Request $request, CustomLoginRequest $customLoginRequest) {
+	public function customLogin(Request $request, CustomLoginRequest $customLoginRequest)
+	{
 		$credentials = $customLoginRequest->only('email', 'password');
 		if (Auth::guard($this->guard)->attempt($credentials)) {
 			$request->session()->regenerate();
@@ -39,18 +42,21 @@ class CustomAuthController extends Controller
 		return redirect("login")->withError( 'Email or password invalid' );
 	}
 
-	public function registration() {
+	public function registration()
+	{
 		return view('auth.registration');
 	}
 
-	public function customRegistration(CustomRegistrationRequest $request) {
+	public function customRegistration(CustomRegistrationRequest $request)
+	{
 		// create user
 		$result = $this->userService->create($request->all());
 
 		return redirect("login")->withSuccess( 'Registration success, please login' );
 	}
 
-	public function logOut( Request $request ) {
+	public function logOut(Request $request)
+	{
 		Auth::guard($this->guard)->logout();
 
 		$request->session()->invalidate();

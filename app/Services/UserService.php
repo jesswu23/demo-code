@@ -9,7 +9,8 @@ Class UserService
 {
     protected $userRepository;
 
-    public function __construct( UserRepository $userRepository ) {
+    public function __construct(UserRepository $userRepository)
+    {
         $this->userRepository = $userRepository;
     }
 

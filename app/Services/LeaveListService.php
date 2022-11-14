@@ -10,14 +10,18 @@ Class LeaveListService
 	protected $leaveListRepository;
 	protected $calendarRepository;
 
-	public function __construct( LeaveListRepository $leaveListRepository, CalendarRepository $calendarRepository ) {
+	public function __construct(LeaveListRepository $leaveListRepository, CalendarRepository $calendarRepository) {
 		$this->leaveListRepository = $leaveListRepository;
 		$this->calendarRepository = $calendarRepository;
 	}
 
 	public function create(array $params)
 	{
-		$total_hours = $this->getLeaveHours( $params['start_date'], $params['end_date']);
+		$total_hours = $this->getLeaveHours($params['start_date'], $params['end_date']);
+
+		if(isset($total_hours['status']) && $total_hours['status'] == 'error') {
+			return ['status' => 'error', 'message' => $total_hours['message']];
+		}
 
 		$result = $this->leaveListRepository->create([
 			'user_id' => $params['user_id'],
@@ -31,41 +35,47 @@ Class LeaveListService
 		return ['status' => 'success', 'message' => 'Apply success.'];
 	}
 
-	public function update($id = null, array $params)
+	public function update(int $id, array $params)
 	{
-		$total_hours = $this->getLeaveHours( $params['start_date'], $params['end_date']);
+		$total_hours = $this->getLeaveHours($params['start_date'], $params['end_date']);
+
+		if(isset($total_hours['status']) && $total_hours['status'] == 'error') {
+			return ['status' => 'error', 'message' => $total_hours['message']];
+		}
+
 		$params['hours'] = $total_hours;
 
-		$model = $this->leaveListRepository->update($id, $params);
+		$this->leaveListRepository->update($id, $params);
 
-		return $model;
+		return ['status' => 'success', 'message' => 'Update success'];
 	}
 
-	public function updateByDate( $date = null)
+	public function updateByDate(string $date)
 	{
 		// Get data after this date
-		$date = date_create( $date );
+		$date = date_create($date);
 		$date = date_format($date,"Y-m-d");
 
-		$models = $this->leaveListRepository->getByDate( $date );
+		$models = $this->leaveListRepository->getByDate($date);
 		foreach ($models as $key => $model) {
-			$total_hours = $this->getLeaveHours( $model['start_at'], $model['end_at']);
+			$total_hours = $this->getLeaveHours($model['start_at'], $model['end_at']);
+
+			if(isset($total_hours['status']) && $total_hours['status'] == 'error') {
+				$params['type'] = 3; // reject
+			}
+
 			$params['hours'] = $total_hours;
 
 			$this->leaveListRepository->update($model->id, $params);
 		}
 
-		return true;
+		return ['status' => 'success', 'message' => 'Update success'];
 
 	}
 
-	public function get( $id = null)
+	public function get(int $id)
 	{
-		if( !$id ) {
-			return false;
-		}
-
-		$model = $this->leaveListRepository->get( $id );
+		$model = $this->leaveListRepository->get($id);
 
 		return $model;
 	}
@@ -79,7 +89,7 @@ Class LeaveListService
 		foreach ($models as $key => $model) {
 			$tmp['title'] = $model->memo;
 
-			$date = date_create( $model->date );
+			$date = date_create($model->date);
 			$tmp['start'] = date_format($date,"Y-m-d");
 
 			$events[] = $tmp;
@@ -99,7 +109,7 @@ Class LeaveListService
 		return response()->json($events, 200);
 	}
 
-	protected function getLeaveHours( $start_date = null, $end_date = null)
+	protected function getLeaveHours(string $start_date, string $end_date)
 	{
 		$start_date = date_create($start_date);
 		$end_date = date_create($end_date);
@@ -109,16 +119,16 @@ Class LeaveListService
 		$diff_hour = $diff->h;
 
 		// Check if it's a holiday
-		$start_date = date_format( $start_date, "Ymd" ); // The database format is YYYYMMDD
-		$end_date = date_format( $end_date, "Ymd" ); // The database format is YYYYMMDD
+		$start_date = date_format($start_date, "Ymd"); // The database format is YYYYMMDD
+		$end_date = date_format($end_date, "Ymd"); // The database format is YYYYMMDD
 
-		$checkResult = $this->calendarRepository->getHolidayByDateRange( $start_date, $end_date );
-		$holiday_hours = ( $diff_day > 0 ) ? ($checkResult->count() * 7) : 0;
+		$checkResult = $this->calendarRepository->getHolidayByDateRange($start_date, $end_date);
+		$holiday_hours = ($diff_day > 0) ? ($checkResult->count() * 7) : 0;
 
 		$hour = $diff->h;
 		if($diff_hour < 4) {
 			return ['status' => 'error', 'message' => 'Take at least four hours of leave.'];
-		} else if( $diff_day > 0 && $diff_hour < 9){
+		} else if($diff_day > 0 && $diff_hour < 9){
 			$hour = $diff_hour;
 		} else if($diff_day == 0 && $diff_hour > 9) {
 			// minus 18:00 ~ 9:00 hour

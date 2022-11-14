@@ -11,7 +11,8 @@ class LeaveController extends Controller
 	protected $leaveListService;
 	protected $calendarService;
 
-	public function __construct( LeaveListService $leaveListService, CalendarService $calendarService ) {
+	public function __construct(LeaveListService $leaveListService, CalendarService $calendarService)
+	{
 		$this->leaveListService = $leaveListService;
 		$this->calendarService = $calendarService;
 	}
@@ -47,11 +48,7 @@ class LeaveController extends Controller
 		// Create leave;
         $result = $this->leaveListService->create($request->all());
 
-        if( $result['status'] == 'error' ) {
-        	return redirect('leave/create')->withError( $result['message'] );
-        } else {
-        	return redirect('leave/create')->withSuccess( $result['message'] );
-        }
+        return redirect('/leave/create')->with($result['status'], $result['message']);
 	}
 
 	/**
@@ -60,7 +57,7 @@ class LeaveController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show($id)
+	public function show(int $id)
 	{
 		//
 	}
@@ -71,12 +68,12 @@ class LeaveController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit($id)
+	public function edit(int $id)
 	{
-		$model = $result = $this->leaveListService->get( $id );
+		$leaveList = $this->leaveListService->get($id);
 
         return view('leave/edit')
-                ->with('model', $model);
+                ->with('leaveList', $leaveList);
 	}
 
 	/**
@@ -86,11 +83,11 @@ class LeaveController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $id)
+	public function update(Request $request, int $id)
 	{
-		$this->leaveListService->update( $id, $request->all() );
+		$result = $this->leaveListService->update($id, $request->all());
 
-        return redirect('/leave/edit/' . $id)->withSuccess('Update leave data success.');
+		return redirect('/leave/edit/' . $id)->with($result['status'], $result['message']);
 	}
 
 	/**
@@ -99,7 +96,7 @@ class LeaveController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy($id)
+	public function destroy(int $id)
 	{
 		//
 	}

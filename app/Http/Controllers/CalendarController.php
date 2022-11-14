@@ -10,7 +10,8 @@ class CalendarController extends Controller
 {
     protected $calendarService;
 
-    public function __construct( CalendarService $calendarService, LeaveListService $leaveListService ) {
+    public function __construct(CalendarService $calendarService, LeaveListService $leaveListService)
+    {
         $this->calendarService = $calendarService;
         $this->leaveListService = $leaveListService;
     }
@@ -52,7 +53,7 @@ class CalendarController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         //
     }
@@ -63,9 +64,9 @@ class CalendarController extends Controller
      * @param  string  $date
      * @return \Illuminate\Http\Response
      */
-    public function edit($date)
+    public function edit(string $date)
     {
-        $model = $this->calendarService->getByDate( $date );
+        $model = $this->calendarService->getByDate($date);
 
         return view('calendar/edit')
                 ->with('date', $date)
@@ -79,10 +80,10 @@ class CalendarController extends Controller
      * @param  string  $date
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $date)
+    public function update(Request $request, string $date)
     {
-        $this->calendarService->updateByDate( $date, $request->all() );
-        $this->leaveListService->updateByDate( $date );
+        $this->calendarService->updateByDate($date, $request->all());
+        $this->leaveListService->updateByDate($date);
 
         return redirect('/leave')->withSuccess('Update calendar success.');
     }
@@ -93,7 +94,7 @@ class CalendarController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         //
     }
