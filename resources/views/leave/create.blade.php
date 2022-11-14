@@ -1,6 +1,5 @@
 @extends('layout')
 @section('content')
-<script src="{{ URL::asset('/js/leave.js') }}"></script>
 <main>
 	<div class="cotainer">
 		<div class="row justify-content-center">
