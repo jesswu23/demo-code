@@ -43,14 +43,15 @@ Class LeaveListService
 	{
 		// Get data after this date
 		$date = date_create($date);
-		$date = date_format($date,"Y-m-d");
+		$date = date_format($date, "Y-m-d");
 
 		$leaveLists = $this->leaveListRepository->getByDate($date);
 		foreach ($leaveLists as $key => $leaveList) {
 			$total_hours = $this->getLeaveHours($leaveList['start_at'], $leaveList['end_at']);
 
+			$params['status'] = 1; // in application
 			if(isset($total_hours['status']) && $total_hours['status'] == 'error') {
-				$params['type'] = 3; // reject
+				$params['status'] = 3; // reject
 			}
 
 			$params['hours'] = $total_hours;
@@ -59,7 +60,6 @@ Class LeaveListService
 		}
 
 		return ['status' => 'success', 'message' => 'Update success'];
-
 	}
 
 	public function get(int $id)
