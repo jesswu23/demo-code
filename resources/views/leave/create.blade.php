@@ -1,6 +1,9 @@
 @extends('layout')
 @section('content')
+{{-- datepicker --}}
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+<script type="text/javascript" src="{{ asset('/js/leave.js') }}"></script>
 <main>
 	<div class="cotainer">
 		<div class="row g-3 justify-content-center">
@@ -54,7 +57,4 @@
 		</div>
 	</div>
 </main>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
-<script type="text/javascript" src="{{ asset('/js/leave.js') }}"></script>
 @endsection
