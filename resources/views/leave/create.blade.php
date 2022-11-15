@@ -1,7 +1,6 @@
 @extends('layout')
 @section('content')
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
 <main>
 	<div class="cotainer">
 		<div class="row g-3 justify-content-center">
@@ -14,7 +13,11 @@
 					</div>
 					<div class="mb-3">
 						<label for="start_time" class="form-label">Start time</label>
-						<input class="form-control timepicker" type="text" id="start_time" name="start_time" placeholder="ex:09:00">
+						<select class="form-select" aria-label="Default select example" id="start_time" name="start_time">
+							<option selected>Please select</option>
+							<option value="09:00">09:00 ~ 13:00</option>
+							<option value="14:00">14:00 ~ 18:00</option>
+						</select>
 					</div>
 
 					<div class="mb-3">
@@ -23,7 +26,11 @@
 					</div>
 					<div class="mb-3">
 						<label for="end_time" class="form-label">End time</label>
-						<input class="form-control timepicker" type="text" id="end_time" name="end_time" placeholder="ex:09:00">
+						<select class="form-select" aria-label="Default select example" id="end_time" name="end_time">
+							<option selected>Please select</option>
+							<option value="13:00">09:00 ~ 13:00</option>
+							<option value="18:00">14:00 ~ 18:00</option>
+						</select>
 					</div>
 
 					<div class="mb-3 mt-3">
@@ -49,6 +56,5 @@
 </main>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js'></script>
 <script type="text/javascript" src="{{ asset('/js/leave.js') }}"></script>
 @endsection

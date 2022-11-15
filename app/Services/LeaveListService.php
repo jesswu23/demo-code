@@ -24,14 +24,11 @@ Class LeaveListService
 			return ['status' => 'error', 'message' => $total_hours['message']];
 		}
 
-		$result = $this->leaveListRepository->create([
-			'user_id' => $params['user_id'],
-			'start_at' => $start_datetime,
-			'end_at' => $end_datetime,
-			'hours' => $total_hours,
-			'type' => $params['type'],
-			'reason' => $params['reason']
-		]);
+		$params['hours'] = $total_hours;
+		$params['start_at'] = $start_datetime;
+		$params['end_at'] = $end_datetime;
+
+		$result = $this->leaveListRepository->create($params);
 
 		return ['status' => 'success', 'message' => 'Apply success.'];
 	}
@@ -137,23 +134,21 @@ Class LeaveListService
 		$end_hour = date_format($end_date_create, "H");
 
 		$checkResult = $this->calendarRepository->getHolidayByDateRange($start_date, $end_date);
-		$holiday_hours = ($diff_day > 0) ? ($checkResult->count() * 7) : 0;
+		$holiday_hours = ($diff_day > 0) ? ($checkResult->count() * 8) : 0;
 
 		$hour = $diff_hour;
 		if($start_hour <= 12 && $end_hour > 12) {
 			$hour = $diff_hour - 1; // minus 12:00 ~ 13:00
 		}
 
-		if($hour < 4) {
-			return ['status' => 'error', 'message' => 'Take at least four hours of leave.'];
-		} else if($diff_day > 0 && $diff_hour < 9){
+		if($diff_day > 0 && $diff_hour < 9){
 			$hour = $diff_hour;
 		} else if($diff_day == 0 && $diff_hour > 9) {
 			// minus 18:00 ~ 9:00 hour
 			$hour = $diff_hour - 15;
 		}
 
-		$total_hours = ($diff_day * 7) + $hour - $holiday_hours;
+		$total_hours = ($diff_day * 8) + $hour - $holiday_hours;
 
 		return $total_hours;
 	}
