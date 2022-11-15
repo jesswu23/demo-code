@@ -10,7 +10,8 @@ Class LeaveListService
 	protected $leaveListRepository;
 	protected $calendarRepository;
 
-	public function __construct(LeaveListRepository $leaveListRepository, CalendarRepository $calendarRepository) {
+	public function __construct(LeaveListRepository $leaveListRepository, CalendarRepository $calendarRepository)
+	{
 		$this->leaveListRepository = $leaveListRepository;
 		$this->calendarRepository = $calendarRepository;
 	}

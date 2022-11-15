@@ -18,7 +18,6 @@ class ImportController extends Controller
 
 	public function importFile(Request $request)
 	{
-
 		if($request->importFile->isValid()) {
 			Excel::import($this->calendarsImport, $request->importFile);
 

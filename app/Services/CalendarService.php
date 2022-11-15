@@ -8,7 +8,8 @@ Class CalendarService
 {
 	protected $calendarRepository;
 
-	public function __construct(CalendarRepository $calendarRepository) {
+	public function __construct(CalendarRepository $calendarRepository)
+	{
 		$this->calendarRepository = $calendarRepository;
 	}
 

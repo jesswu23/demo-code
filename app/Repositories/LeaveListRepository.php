@@ -21,27 +21,27 @@ class LeaveListRepository
     public function update(int $id, array $params )
     {
         $leaveList = $this->get( $id );
-        if( isset($params['start_at']) ){
+        if(isset($params['start_at'])) {
             $leaveList->start_at = $params['start_at'];
         }
 
-        if( isset($params['end_at']) ){
+        if(isset($params['end_at'])) {
             $leaveList->end_at = $params['end_at'];
         }
 
-        if( isset($params['hours']) ){
+        if(isset($params['hours'])) {
             $leaveList->hours = $params['hours'];
         }
 
-        if( isset($params['status']) ){
+        if(isset($params['status'])) {
             $leaveList->status = $params['status'];
         }
 
-        if( isset($params['type']) ){
+        if(isset($params['type'])) {
             $leaveList->type = $params['type'];
         }
 
-        if( isset($params['reason']) ){
+        if(isset($params['reason'])) {
             $leaveList->reason = $params['reason'];
         }
 
