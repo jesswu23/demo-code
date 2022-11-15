@@ -13,7 +13,7 @@ class LeaveListRepository
 
     public function get(int $id)
     {
-    	$leaveList = LeaveList::find( $id );
+    	$leaveList = LeaveList::find($id);
 
     	return $leaveList;
     }
@@ -21,12 +21,12 @@ class LeaveListRepository
     public function update(int $id, array $params )
     {
         $leaveList = $this->get( $id );
-        if( isset($params['start_date']) ){
-            $leaveList->start_at = $params['start_date'];
+        if( isset($params['start_at']) ){
+            $leaveList->start_at = $params['start_at'];
         }
 
-        if( isset($params['end_date']) ){
-            $leaveList->end_at = $params['end_date'];
+        if( isset($params['end_at']) ){
+            $leaveList->end_at = $params['end_at'];
         }
 
         if( isset($params['hours']) ){

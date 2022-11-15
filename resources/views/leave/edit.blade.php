@@ -1,5 +1,7 @@
 @extends('layout')
 @section('content')
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
 <main>
 	<div class="cotainer">
 		<div class="row justify-content-center">
@@ -14,12 +16,20 @@
 
 					<div class="mb-3">
 						<label for="start_date" class="form-label">Start date</label>
-						<input class="form-control" type="text" id="start_date" name="start_date" placeholder="ex:2022-01-01 09:00" value="{{ $leaveList->start_at }}">
+						<input class="form-control" type="text" id="start_date" name="start_date" placeholder="ex:2022-01-01" value="{{ $leaveList->start_date }}">
+					</div>
+					<div class="mb-3">
+						<label for="start_time" class="form-label">Start time</label>
+						<input class="form-control timepicker" type="text" id="start_time" name="start_time" placeholder="ex:09:00" value="{{ $leaveList->start_time }}">
 					</div>
 
 					<div class="mb-3">
 						<label for="end_date" class="form-label">End date</label>
-						<input class="form-control" type="text" id="end_date" name="end_date" placeholder="ex:2022-01-01 09:00"  value="{{ $leaveList->end_at }}">
+						<input class="form-control" type="text" id="end_date" name="end_date" placeholder="ex:2022-01-01" value="{{ $leaveList->end_date }}">
+					</div>
+					<div class="mb-3">
+						<label for="end_time" class="form-label">End time</label>
+						<input class="form-control timepicker" type="text" id="end_time" name="end_time" placeholder="ex:09:00" value="{{ $leaveList->end_time }}">
 					</div>
 
 					<div class="mb-3">
@@ -58,4 +68,8 @@
 		</div>
 	</div>
 </main>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js'></script>
+<script type="text/javascript" src="{{ asset('/js/leave.js') }}"></script>
 @endsection
