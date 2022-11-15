@@ -136,17 +136,7 @@ Class LeaveListService
 		$checkResult = $this->calendarRepository->getHolidayByDateRange($start_date, $end_date);
 		$holiday_hours = ($diff_day >= 0) ? ($checkResult->count() * 8) : 0;
 
-		$hour = $diff_hour;
-		if($start_hour <= 12 && $end_hour > 12) {
-			$hour = $diff_hour - 1; // minus 12:00 ~ 13:00
-		}
-
-		if($diff_day > 0 && $diff_hour < 9){
-			$hour = $diff_hour;
-		} else if($diff_day == 0 && $diff_hour > 9) {
-			// minus 18:00 ~ 9:00 hour
-			$hour = $diff_hour - 15;
-		}
+		$hour = $diff_hour - 1; // minus 13:00 ~ 14:00
 
 		$total_hours = ($diff_day * 8) + $hour - $holiday_hours;
 
