@@ -96,10 +96,11 @@ Class LeaveListService
 		// Get calendar event
 		$calendars = $this->calendarRepository->events();
 		foreach ($calendars as $key => $calendar) {
-			$tmp['title'] = $calendar->memo;
+			$tmp['title'] = ($calendar->memo) ? $calendar->memo : '';
 
 			$date = date_create($calendar->date);
 			$tmp['start'] = date_format($date,"Y-m-d");
+			$tmp['color'] = '#dc3545';
 
 			$events[] = $tmp;
 		}
@@ -111,6 +112,7 @@ Class LeaveListService
 			$tmp['start'] = $leaveList->start_at;
 			$tmp['end'] = $leaveList->end_at;
 			$tmp['url'] = url('leave/edit/' . $leaveList->id);
+			$tmp['color'] = '#0d6efd';
 
 			$events[] = $tmp;
 		}
