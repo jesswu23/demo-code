@@ -17,34 +17,22 @@ Class LeaveListService
 
 	public function create(array $params)
 	{
-		list($start_datetime, $end_datetime) = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
-		$total_hours = $this->getLeaveHours($start_datetime, $end_datetime);
-
-		if(isset($total_hours['status']) && $total_hours['status'] == 'error') {
-			return ['status' => 'error', 'message' => $total_hours['message']];
+		$params = $this->formatParams($params);
+		if(isset($params['status']) && $params['status'] == 'error') {
+			return ['status' => 'error', 'message' => $params['message']];
 		}
 
-		$params['hours'] = $total_hours;
-		$params['start_at'] = $start_datetime;
-		$params['end_at'] = $end_datetime;
-
-		$result = $this->leaveListRepository->create($params);
+		$this->leaveListRepository->create($params);
 
 		return ['status' => 'success', 'message' => 'Apply success.'];
 	}
 
 	public function update(int $id, array $params)
 	{
-		list($start_datetime, $end_datetime) = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
-		$total_hours = $this->getLeaveHours($start_datetime, $end_datetime);
-
-		if(isset($total_hours['status']) && $total_hours['status'] == 'error') {
-			return ['status' => 'error', 'message' => $total_hours['message']];
+		$params = $this->formatParams($params);
+		if(isset($params['status']) && $params['status'] == 'error') {
+			return ['status' => 'error', 'message' => $params['message']];
 		}
-
-		$params['hours'] = $total_hours;
-		$params['start_at'] = $start_datetime;
-		$params['end_at'] = $end_datetime;
 
 		$this->leaveListRepository->update($id, $params);
 
@@ -161,5 +149,21 @@ Class LeaveListService
 		$end_datetime = $end_date . ' ' . $end_time;
 
 		return [$start_datetime, $end_datetime];
+	}
+
+	protected function formatParams(array $params)
+	{
+		list($start_datetime, $end_datetime) = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
+		$total_hours = $this->getLeaveHours($start_datetime, $end_datetime);
+
+		if(isset($total_hours['status']) && $total_hours['status'] == 'error') {
+			return ['status' => 'error', 'message' => $total_hours['message']];
+		}
+
+		$params['hours'] = $total_hours;
+		$params['start_at'] = $start_datetime;
+		$params['end_at'] = $end_datetime;
+
+		return $params;
 	}
 }
