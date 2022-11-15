@@ -49,7 +49,6 @@ Class LeaveListService
 		foreach ($leaveLists as $key => $leaveList) {
 			$total_hours = $this->getLeaveHours($leaveList['start_at'], $leaveList['end_at']);
 
-			$params['status'] = 1; // in application
 			if(isset($total_hours['status']) && $total_hours['status'] == 'error') {
 				$params['status'] = 3; // reject
 			}
