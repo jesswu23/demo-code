@@ -48,7 +48,7 @@ class LeaveController extends Controller
 		// Create leave;
         $result = $this->leaveListService->create($request->all());
 
-        return redirect('/leave/create')->with($result['status'], $result['message']);
+        return redirect('/leave/create')->with('success', 'Apply success.');
 	}
 
 	/**
@@ -87,7 +87,7 @@ class LeaveController extends Controller
 	{
 		$result = $this->leaveListService->update($id, $request->all());
 
-		return redirect('/leave/edit/' . $id)->with($result['status'], $result['message']);
+		return redirect('/leave/edit/' . $id)->with('success', 'Update success.');
 	}
 
 	/**

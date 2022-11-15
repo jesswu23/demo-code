@@ -19,25 +19,17 @@ Class LeaveListService
 	public function create(array $params)
 	{
 		$params = $this->formatParams($params);
-		if(isset($params['status']) && $params['status'] == 'error') {
-			return ['status' => 'error', 'message' => $params['message']];
-		}
+		$result = $this->leaveListRepository->create($params);
 
-		$this->leaveListRepository->create($params);
-
-		return ['status' => 'success', 'message' => 'Apply success.'];
+		return $result;
 	}
 
 	public function update(int $id, array $params)
 	{
 		$params = $this->formatParams($params);
-		if(isset($params['status']) && $params['status'] == 'error') {
-			return ['status' => 'error', 'message' => $params['message']];
-		}
+		$result = $this->leaveListRepository->update($id, $params);
 
-		$this->leaveListRepository->update($id, $params);
-
-		return ['status' => 'success', 'message' => 'Update success'];
+		return $result;
 	}
 
 	public function updateByDate(string $date)
@@ -59,7 +51,7 @@ Class LeaveListService
 			$this->leaveListRepository->update($leaveList->id, $params);
 		}
 
-		return ['status' => 'success', 'message' => 'Update success'];
+		return true;
 	}
 
 	public function get(int $id)
@@ -168,10 +160,6 @@ Class LeaveListService
 	{
 		list($start_datetime, $end_datetime) = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
 		$total_hours = $this->getLeaveHours($start_datetime, $end_datetime);
-
-		if(isset($total_hours['status']) && $total_hours['status'] == 'error') {
-			return ['status' => 'error', 'message' => $total_hours['message']];
-		}
 
 		$params['hours'] = $total_hours;
 		$params['start_at'] = $start_datetime;

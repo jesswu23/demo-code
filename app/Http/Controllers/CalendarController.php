@@ -85,7 +85,7 @@ class CalendarController extends Controller
         $this->calendarService->updateByDate($date, $request->all());
         $this->leaveListService->updateByDate($date);
 
-        return redirect('/leave')->withSuccess('Update calendar success.');
+        return redirect('/leave')->with('success', 'Update calendar success.');
     }
 
     /**
