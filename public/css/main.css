@@ -6,3 +6,9 @@
   max-width: 1100px;
   margin: 40px auto;
 }
+
+.fc-day-sun, .fc-day-sat {
+	background-color:#99999926;
+	color:#999;
+	border: 2px solid red;
+}

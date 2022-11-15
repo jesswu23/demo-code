@@ -7,9 +7,11 @@
 <script type="text/javascript" src="https://momentjs.com/downloads/moment.min.js"></script>
 
 <script type="text/javascript" src="{{ asset('/js/calendar.js') }}"></script>
+
 <main>
 	<div class="cotainer">
 		<div id='calendar'></div>
 	</div>
 </main>
+
 @endsection
