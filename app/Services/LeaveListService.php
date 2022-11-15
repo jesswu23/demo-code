@@ -77,6 +77,10 @@ Class LeaveListService
 		return $leaveList;
 	}
 
+	/**
+	 * Get holiday and leave data
+	 * @return json Holiday and leave data information
+	 */
 	public function events()
 	{
 		$events = [];
@@ -108,6 +112,12 @@ Class LeaveListService
 		return response()->json($events, 200);
 	}
 
+	/**
+	 * Calculate leave hours
+	 * @param  string $start_date leave start datetime
+	 * @param  string $end_date   leave end datetime
+	 * @return int             leave hours
+	 */
 	protected function getLeaveHours(string $start_date, string $end_date)
 	{
 		$start_date_create = date_create($start_date);
@@ -143,6 +153,14 @@ Class LeaveListService
 		return $total_hours;
 	}
 
+	/**
+	 * combine leave date and leave time
+	 * @param  string $start_date leave start date
+	 * @param  string $start_time leave start time
+	 * @param  string $end_date   leave end date
+	 * @param  string $end_time   leave end time
+	 * @return array             leave start datetime and leave end datetime
+	 */
 	protected function combineDateTime(string $start_date, string $start_time, string $end_date, string $end_time)
 	{
 		$start_datetime = $start_date . ' ' . $start_time;
@@ -151,6 +169,11 @@ Class LeaveListService
 		return [$start_datetime, $end_datetime];
 	}
 
+	/**
+	 * processing parameters
+	 * @param  array  $params parameters
+	 * @return array          parameters array
+	 */
 	protected function formatParams(array $params)
 	{
 		list($start_datetime, $end_datetime) = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
