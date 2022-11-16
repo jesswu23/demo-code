@@ -106,31 +106,51 @@ Class LeaveListService
 
 	/**
 	 * Calculate leave hours
-	 * @param  string $start_date leave start datetime
-	 * @param  string $end_date   leave end datetime
+	 * @param  string $start_datetime leave start datetime
+	 * @param  string $end_datetime   leave end datetime
 	 * @return int             leave hours
 	 */
-	protected function getLeaveHours(string $start_date, string $end_date)
+	protected function getLeaveHours(string $start_datetime, string $end_datetime)
 	{
+		$start_datetime_create = date_create($start_datetime);
+		$end_datetime_create = date_create($end_datetime);
+
+		$start_date = date_format($start_datetime_create, "Ymd"); // The database format is YYYYMMDD
+		$start_hour = date_format($start_datetime_create, "H");
+		$end_date = date_format($end_datetime_create, "Ymd"); // The database format is YYYYMMDD
+		$end_hour = date_format($end_datetime_create, "H");
+
+		// get holiday
+		$result = $this->calendarRepository->getHolidayByDateRange($start_date, $end_date);
+		$holiday_array = array_column($result->toArray(), 'date', 'id');
+
 		$start_date_create = date_create($start_date);
 		$end_date_create = date_create($end_date);
 
 		$diff = date_diff($start_date_create, $end_date_create);
 		$diff_day = $diff->d;
-		$diff_hour = $diff->h;
 
-		// Check if it's a holiday
-		$start_date = date_format($start_date_create, "Ymd"); // The database format is YYYYMMDD
-		$start_hour = date_format($start_date_create, "H");
-		$end_date = date_format($end_date_create, "Ymd"); // The database format is YYYYMMDD
-		$end_hour = date_format($end_date_create, "H");
+		$current_date = strtotime($start_date);
+		$last_date    = strtotime($end_date);
 
-		$checkResult = $this->calendarRepository->getHolidayByDateRange($start_date, $end_date);
-		$holiday_hours = ($diff_day >= 0) ? ($checkResult->count() * 8) : 0;
+		$i = 0;
+		$total_hours = 0;
+		while ($current_date <= $last_date) {
+			// skip holiday
+			if(!in_array(date('Ymd', $current_date), $holiday_array)) {
+				$date_hour = 8; // default 8 hour
+				if($i == 0) {
+					$date_hour = ($start_hour == '14') ? 4 : 8;
+				} else if($i == $diff_day){
+					$date_hour = ($end_hour == '13') ? 4 : 8;
+				}
 
-		$hour = $diff_hour - 1; // minus 13:00 ~ 14:00
+				$total_hours += $date_hour;
+			}
 
-		$total_hours = ($diff_day * 8) + $hour - $holiday_hours;
+			$current_date = strtotime('+1 day', $current_date);
+			++$i;
+		}
 
 		return $total_hours;
 	}
