@@ -16,10 +16,13 @@
 					<div class="mb-3 mt-3">
 						<label for="is_holiday" class="form-label">Holiday</label>
 						<select class="form-select" aria-label="Default select example" id="is_holiday" name="is_holiday">
-							<option @if( $calendar->is_holiday == '') selected @endif>Please select</option>
+							<option @if( $calendar->is_holiday == '') selected @endif value="">Please select</option>
 							<option @if( $calendar->is_holiday == '2') selected @endif value="2">Yes</option>
 							<option @if( $calendar->is_holiday == '0') selected @endif value="0">No</option>
 						</select>
+						@if ($errors->has('is_holiday'))
+						<span class="text-danger">{{ $errors->first('is_holiday') }}</span>
+						@endif
 					</div>
 					<div class="mb-3">
 						<label for="reason" class="form-label">Memo</label>
