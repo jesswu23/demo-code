@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\CalendarService;
 use App\Services\LeaveListService;
+use App\Http\Requests\CalendarUpdateRequest;
 
 class CalendarController extends Controller
 {
@@ -76,13 +77,13 @@ class CalendarController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\CalendarUpdateRequest $calendarUpdateRequest custom request
      * @param  string  $date
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, string $date)
+    public function update(CalendarUpdateRequest $calendarUpdateRequest, string $date)
     {
-        $this->calendarService->updateByDate($date, $request->all());
+        $this->calendarService->updateByDate($date, $calendarUpdateRequest->all());
         $this->leaveListService->updateByDate($date);
 
         return redirect('/leave')->with('success', 'Update calendar success.');

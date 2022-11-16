@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\LeaveListService;
 use App\Services\CalendarService;
+use App\Http\Requests\LeaveStoreRequest;
+use App\Http\Requests\LeaveUpdateRequest;
 
 class LeaveController extends Controller
 {
@@ -40,13 +42,13 @@ class LeaveController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  App\Http\Requests\LeaveStoreRequest $leaveStoreRequest custom request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(Request $request)
+	public function store(LeaveStoreRequest $leaveStoreRequest)
 	{
-		// Create leave;
-        $result = $this->leaveListService->create($request->all());
+		// Create leave
+        $result = $this->leaveListService->create($leaveStoreRequest->all());
 
         return redirect('/leave/create')->with('success', 'Apply success.');
 	}
@@ -79,13 +81,13 @@ class LeaveController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  App\Http\Requests\LeaveUpdateRequest $leaveUpdateRequest custom request
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, int $id)
+	public function update(LeaveUpdateRequest $leaveUpdateRequest, int $id)
 	{
-		$result = $this->leaveListService->update($id, $request->all());
+		$result = $this->leaveListService->update($id, $leaveUpdateRequest->all());
 
 		return redirect('/leave/edit/' . $id)->with('success', 'Update success.');
 	}
