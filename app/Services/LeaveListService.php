@@ -122,7 +122,6 @@ Class LeaveListService
 
 		// get holiday
 		$result = $this->calendarRepository->getHolidayByDateRange($start_date, $end_date);
-		$holiday_array = array_column($result->toArray(), 'date', 'id');
 
 		$start_date_create = date_create($start_date);
 		$end_date_create = date_create($end_date);
@@ -136,8 +135,8 @@ Class LeaveListService
 		$i = 0;
 		$total_hours = 0;
 		while ($current_date <= $last_date) {
-			// skip holiday
-			if(!in_array(date('Ymd', $current_date), $holiday_array)) {
+			// check if it's a holiday
+			if(!$result->where('date', date('Ymd', $current_date))->all()) {
 				$date_hour = 8; // default 8 hour
 				if($i == 0) {
 					$date_hour = ($start_hour == '14') ? 4 : 8;
