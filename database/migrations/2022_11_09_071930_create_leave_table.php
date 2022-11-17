@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('leave_lists', function (Blueprint $table) {
+        Schema::create('leave', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id'); // Foreign key field type must be the same as users id
             $table->foreign('user_id')->references('id')->on('users');
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('leave_lists');
+        Schema::dropIfExists('leave');
     }
 };

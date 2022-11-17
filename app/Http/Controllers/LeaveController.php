@@ -3,19 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\LeaveListService;
+use App\Services\LeaveService;
 use App\Services\CalendarService;
 use App\Http\Requests\LeaveStoreRequest;
 use App\Http\Requests\LeaveUpdateRequest;
 
 class LeaveController extends Controller
 {
-	protected $leaveListService;
+	protected $leaveService;
 	protected $calendarService;
 
-	public function __construct(LeaveListService $leaveListService, CalendarService $calendarService)
+	public function __construct(LeaveService $leaveService, CalendarService $calendarService)
 	{
-		$this->leaveListService = $leaveListService;
+		$this->leaveService = $leaveService;
 		$this->calendarService = $calendarService;
 	}
 
@@ -48,7 +48,7 @@ class LeaveController extends Controller
 	public function store(LeaveStoreRequest $leaveStoreRequest)
 	{
 		// Create leave
-        $result = $this->leaveListService->create($leaveStoreRequest->all());
+        $this->leaveService->create($leaveStoreRequest->all());
 
         return redirect('/leave/create')->with('success', 'Apply success.');
 	}
@@ -72,10 +72,10 @@ class LeaveController extends Controller
 	 */
 	public function edit(int $id)
 	{
-		$leaveList = $this->leaveListService->get($id);
+		$leave = $this->leaveService->get($id);
 
         return view('leave/edit')
-                ->with('leaveList', $leaveList);
+                ->with('leave', $leave);
 	}
 
 	/**
@@ -87,7 +87,7 @@ class LeaveController extends Controller
 	 */
 	public function update(LeaveUpdateRequest $leaveUpdateRequest, int $id)
 	{
-		$result = $this->leaveListService->update($id, $leaveUpdateRequest->all());
+		$this->leaveService->update($id, $leaveUpdateRequest->all());
 
 		return redirect('/leave/edit/' . $id)->with('success', 'Update success.');
 	}
@@ -105,7 +105,6 @@ class LeaveController extends Controller
 
 	public function events()
 	{
-		return $this->leaveListService->events();
-
+		return $this->leaveService->events();
 	}
 }

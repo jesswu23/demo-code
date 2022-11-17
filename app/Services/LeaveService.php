@@ -3,25 +3,25 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
-use App\Repositories\LeaveListRepository;
+use App\Repositories\LeaveRepository;
 use App\Repositories\CalendarRepository;
 use Carbon\Carbon;
 
-Class LeaveListService
+Class LeaveService
 {
-	protected $leaveListRepository;
+	protected $leaveRepository;
 	protected $calendarRepository;
 
-	public function __construct(LeaveListRepository $leaveListRepository, CalendarRepository $calendarRepository)
+	public function __construct(LeaveRepository $leaveRepository, CalendarRepository $calendarRepository)
 	{
-		$this->leaveListRepository = $leaveListRepository;
+		$this->leaveRepository = $leaveRepository;
 		$this->calendarRepository = $calendarRepository;
 	}
 
 	public function create(array $params)
 	{
 		$params = $this->formatParams($params);
-		$result = $this->leaveListRepository->create($params);
+		$result = $this->leaveRepository->create($params);
 
 		return $result;
 	}
@@ -29,7 +29,7 @@ Class LeaveListService
 	public function update(int $id, array $params)
 	{
 		$params = $this->formatParams($params);
-		$result = $this->leaveListRepository->update($id, $params);
+		$result = $this->leaveRepository->update($id, $params);
 
 		return $result;
 	}
@@ -40,11 +40,11 @@ Class LeaveListService
 		$date = date_create($date);
 		$date = date_format($date, "Y-m-d");
 
-		$leaveLists = $this->leaveListRepository->getByDate($date);
-		foreach ($leaveLists as $key => $leaveList) {
-			$params['hours'] = $this->getLeaveHours($leaveList['start_at'], $leaveList['end_at']);
+		$leaves = $this->leaveRepository->getByDate($date);
+		foreach ($leaves as $key => $leave) {
+			$params['hours'] = $this->getLeaveHours($leave['start_at'], $leave['end_at']);
 
-			$this->leaveListRepository->update($leaveList->id, $params);
+			$this->leaveRepository->update($leave->id, $params);
 		}
 
 		return true;
@@ -52,17 +52,17 @@ Class LeaveListService
 
 	public function get(int $id)
 	{
-		$leaveList = $this->leaveListRepository->get($id);
+		$leave = $this->leaveRepository->get($id);
 
-		$start_array = explode(' ', $leaveList['start_at']);
-		$leaveList->start_date = (isset($start_array[0])) ? $start_array[0] : '';
-		$leaveList->start_time = (isset($start_array[1])) ? date_format(date_create($start_array[1]), 'H:i') : '';
+		$start_array = explode(' ', $leave['start_at']);
+		$leave->start_date = (isset($start_array[0])) ? $start_array[0] : '';
+		$leave->start_time = (isset($start_array[1])) ? date_format(date_create($start_array[1]), 'H:i') : '';
 
-		$end_array = explode(' ', $leaveList['end_at']);
-		$leaveList->end_date = (isset($end_array[0])) ? $end_array[0] : '';
-		$leaveList->end_time = (isset($end_array[1])) ? date_format(date_create($end_array[1]), 'H:i') : '';
+		$end_array = explode(' ', $leave['end_at']);
+		$leave->end_date = (isset($end_array[0])) ? $end_array[0] : '';
+		$leave->end_time = (isset($end_array[1])) ? date_format(date_create($end_array[1]), 'H:i') : '';
 
-		return $leaveList;
+		return $leave;
 	}
 
 	/**
@@ -86,12 +86,12 @@ Class LeaveListService
 		}
 
 		// Get leave list
-		$leaveLists = $this->leaveListRepository->lists();
-		foreach ($leaveLists as $key => $leaveList) {
-			$tmp['title'] = $leaveList->user->name;
-			$tmp['start'] = $leaveList->start_at;
-			$tmp['end'] = $leaveList->end_at;
-			$tmp['url'] = url('leave/edit/' . $leaveList->id);
+		$leaves = $this->leaveRepository->lists();
+		foreach ($leaves as $key => $leave) {
+			$tmp['title'] = $leave->user->name;
+			$tmp['start'] = $leave->start_at;
+			$tmp['end'] = $leave->end_at;
+			$tmp['url'] = url('leave/edit/' . $leave->id);
 			$tmp['color'] = '#0d6efd';
 
 			$events[] = $tmp;
@@ -155,10 +155,10 @@ Class LeaveListService
 	 */
 	protected function combineDateTime(string $start_date, string $start_time, string $end_date, string $end_time)
 	{
-		$start_datetime = $start_date . ' ' . $start_time;
-		$end_datetime = $end_date . ' ' . $end_time;
+		$combine_date['start_datetime'] = $start_date . ' ' . $start_time;
+		$combine_date['end_datetime'] = $end_date . ' ' . $end_time;
 
-		return [$start_datetime, $end_datetime];
+		return $combine_date;
 	}
 
 	/**
@@ -168,7 +168,10 @@ Class LeaveListService
 	 */
 	protected function formatParams(array $params)
 	{
-		list($start_datetime, $end_datetime) = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
+		$result = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
+
+		$start_datetime = $result['start_datetime'];
+		$end_datetime = $result['end_datetime'];
 		$total_hours = $this->getLeaveHours($start_datetime, $end_datetime);
 
 		$params['hours']	= $total_hours;

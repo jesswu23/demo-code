@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\CalendarService;
-use App\Services\LeaveListService;
+use App\Services\LeaveService;
 use App\Http\Requests\CalendarUpdateRequest;
 
 class CalendarController extends Controller
 {
     protected $calendarService;
 
-    public function __construct(CalendarService $calendarService, LeaveListService $leaveListService)
+    public function __construct(CalendarService $calendarService, LeaveService $leaveService)
     {
         $this->calendarService = $calendarService;
-        $this->leaveListService = $leaveListService;
+        $this->leaveService = $leaveService;
     }
 
     /**
@@ -84,7 +84,7 @@ class CalendarController extends Controller
     public function update(CalendarUpdateRequest $calendarUpdateRequest, string $date)
     {
         $this->calendarService->updateByDate($date, $calendarUpdateRequest->all());
-        $this->leaveListService->updateByDate($date);
+        $this->leaveService->updateByDate($date);
 
         return redirect('/leave')->with('success', 'Update calendar success.');
     }
