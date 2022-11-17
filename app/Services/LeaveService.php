@@ -36,10 +36,10 @@ Class LeaveService
 
 	public function updateByDate(string $date)
 	{
-		// Get data after this date
-		$date = date_create($date);
-		$date = date_format($date, "Y-m-d");
+		$date_object = Carbon::create($date);
+		$date = $date_object->format('Y-m-d');
 
+		// Get data after this date
 		$leaves = $this->leaveRepository->getByDate($date);
 		foreach ($leaves as $key => $leave) {
 			$params['hours'] = $this->getLeaveHours($leave['start_at'], $leave['end_at']);
