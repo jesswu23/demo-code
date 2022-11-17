@@ -24,22 +24,25 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('logout', 'logOut');
 	});
 
-	Route::controller(UploadController::class)->group(function () {
+	Route::prefix('upload')->controller(UploadController::class)->group(function () {
+		Route::get('/', 'index');
+		Route::get('index', 'index');
 		Route::post('upload_file', 'uploadFile');
 	});
 
-	Route::controller(ImportController::class)->group(function () {
+	Route::prefix('import')->controller(ImportController::class)->group(function () {
+		Route::get('/', 'index');
+		Route::get('index', 'index');
 		Route::post('import_file', 'importFile');
 	});
 
 	Route::controller(UserController::class)->group(function () {
 		Route::get('dashboard', 'dashboard');
-		Route::get('leave', 'leave');
-		Route::get('upload', 'upload');
-		Route::get('import', 'import');
 	});
 
 	Route::prefix('leave')->controller(LeaveController::class)->group(function () {
+		Route::get('/', 'index');
+		Route::get('index', 'index');
 		Route::get('events', 'events');
 		Route::get('create', 'create');
 		Route::post('store', 'store');
