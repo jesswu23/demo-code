@@ -37,8 +37,8 @@ Class CalendarService
 
 	protected function formatDate(string $date, string $format = 'Y-m-d H:i:s')
 	{
-		$date = date_create($date);
-		$date = date_format($date, $format);
+		$date_object = Carbon::create($date);
+		$date = $date_object->format('Ymd');
 
 		return $date;
 	}
