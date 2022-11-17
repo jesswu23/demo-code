@@ -4,9 +4,13 @@ namespace App\Imports;
 
 use App\Models\Calendar;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\SkipsOnError;
+use Maatwebsite\Excel\Concerns\SkipsErrors;
 
-class CalendarsImport implements ToModel
+class CalendarsImport implements ToModel, SkipsOnError
 {
+	use SkipsErrors;
+
 	/**
 	* @param array $row
 	*

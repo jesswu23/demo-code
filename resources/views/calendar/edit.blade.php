@@ -16,9 +16,9 @@
 					<div class="mb-3 mt-3">
 						<label for="is_holiday" class="form-label">Holiday</label>
 						<select class="form-select" aria-label="Default select example" id="is_holiday" name="is_holiday">
-							<option @if( $calendar->is_holiday == '') selected @endif value="">Please select</option>
-							<option @if( $calendar->is_holiday == '2') selected @endif value="2">Yes</option>
-							<option @if( $calendar->is_holiday == '0') selected @endif value="0">No</option>
+							<option @if($calendar && $calendar->is_holiday == "") selected @endif value="">Please select</option>
+							<option @if($calendar && $calendar->is_holiday == '2') selected @endif value="2">Yes</option>
+							<option @if($calendar && $calendar->is_holiday == '0') selected @endif value="0">No</option>
 						</select>
 						@if ($errors->has('is_holiday'))
 						<span class="text-danger">{{ $errors->first('is_holiday') }}</span>
@@ -26,7 +26,7 @@
 					</div>
 					<div class="mb-3">
 						<label for="reason" class="form-label">Memo</label>
-						<input class="form-control" type="text" id="memo" name="memo" value="{{ $calendar->memo; }}">
+						<input class="form-control" type="text" id="memo" name="memo" value="@if ($calendar){{ $calendar->memo; }}@endif">
 					</div>
 
 					<button type="submit" class="btn btn-primary">Submit</button>

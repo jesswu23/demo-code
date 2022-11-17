@@ -6,6 +6,11 @@ use App\Models\Calendar;
 
 class CalendarRepository
 {
+	public function create(array $params)
+    {
+        return Calendar::create($params);
+    }
+
 	public function getByDate(int $date)
 	{
 		$calendar = Calendar::where('date', '=', $date)->first();
@@ -16,9 +21,13 @@ class CalendarRepository
 	public function updateByDate(int $date, array $params)
 	{
 		$calendar = $this->getByDate( $date );
-		$calendar->is_holiday = $params['is_holiday'];
-		$calendar->memo = $params['memo'];
-		$calendar->save();
+		if(!$calendar) {
+			$calendar = $this->create($params);
+		} else {
+			$calendar->is_holiday = $params['is_holiday'];
+			$calendar->memo = $params['memo'];
+			$calendar->save();
+		}
 
 		return $calendar;
 	}
