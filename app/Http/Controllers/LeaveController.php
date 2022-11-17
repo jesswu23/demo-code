@@ -47,8 +47,8 @@ class LeaveController extends Controller
 	 */
 	public function store(LeaveStoreRequest $leaveStoreRequest)
 	{
-		// Create leave
-        $this->leaveService->create($leaveStoreRequest->all());
+		$validated = $leaveUpdateRequest->validated();
+		$this->leaveService->create($validated);
 
         return redirect('/leave/create')->with('success', 'Apply success.');
 	}
@@ -87,7 +87,8 @@ class LeaveController extends Controller
 	 */
 	public function update(LeaveUpdateRequest $leaveUpdateRequest, int $id)
 	{
-		$this->leaveService->update($id, $leaveUpdateRequest->all());
+		$validated = $leaveUpdateRequest->validated();
+		$this->leaveService->update($id, $validated);
 
 		return redirect('/leave/edit/' . $id)->with('success', 'Update success.');
 	}

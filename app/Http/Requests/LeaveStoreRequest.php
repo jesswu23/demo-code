@@ -24,12 +24,12 @@ class LeaveStoreRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			'start_date' => 'required',
-			'start_time' => 'required',
-			'end_date' => 'required',
-			'end_time' => 'required',
-			'type' => 'required',
-			'reason' => 'required',
+			'start_date'	=> 'required|regex:/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}\z/i',
+			'start_time'	=> 'required',
+			'end_date'		=> 'required|regex:/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}\z/i',
+			'end_time'		=> 'required',
+			'type'			=> 'required|integer|numeric',
+			'reason'		=> 'required'
 		];
 	}
 
@@ -40,12 +40,16 @@ class LeaveStoreRequest extends FormRequest
 	public function messages()
 	{
 		return [
-			'start_date.required' => 'Start date can not null. ',
-			'start_time.required' => 'Start time can not null. ',
-			'end_date.required' => 'End date can not null. ',
-			'end_time.required' => 'End time can not null. ',
-			'type.required' => 'Type can not null. ',
-			'reason.required' => 'Reason can not null. '
+			'start_date.required'	=> 'Start date can not null.',
+			'start_date.regex'		=> 'Start date format must be yyyy-mm-dd.',
+			'start_time.required'	=> 'Start time can not null.',
+			'end_date.required'		=> 'End date can not null.',
+			'end_date.regex'		=> 'End date format must be yyyy-mm-dd.',
+			'end_time.required'		=> 'End time can not null.',
+			'type.required'			=> 'Type can not null.',
+			'type.integer'			=> 'Type must be integer.',
+			'type.numeric'			=> 'Type must be number.',
+			'reason.required'		=> 'Reason can not null.'
 		];
 	}
 }
