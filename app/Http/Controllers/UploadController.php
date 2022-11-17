@@ -14,6 +14,11 @@ class UploadController extends Controller
 		$this->uploadService = $uploadService;
 	}
 
+	public function index()
+	{
+		return view('upload.index');
+	}
+
 	public function uploadFile(Request $request)
 	{
 		if($request->file('uploadFile')->isValid()) {

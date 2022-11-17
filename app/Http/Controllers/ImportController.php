@@ -16,6 +16,16 @@ class ImportController extends Controller
 		$this->calendarsImport = $calendarsImport;
 	}
 
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function index()
+	{
+		return view('import.index');
+	}
+
 	public function importFile(Request $request)
 	{
 		if($request->importFile->isValid()) {

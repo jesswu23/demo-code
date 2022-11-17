@@ -4,7 +4,7 @@
 	<div class="cotainer">
 		<div class="row justify-content-center">
 			<div class="col-md-6">
-				<form action="{{ url('import_file') }}" method="POST" enctype="multipart/form-data">
+				<form action="{{ url('import/import_file') }}" method="POST" enctype="multipart/form-data">
 					@csrf
 					<div class="mb-3">
 						<label for="importFile" class="form-label">Import file</label>
