@@ -47,7 +47,7 @@ class LeaveController extends Controller
 	 */
 	public function store(LeaveStoreRequest $leaveStoreRequest)
 	{
-		$validated = $leaveUpdateRequest->validated();
+		$validated = $leaveStoreRequest->validated();
 		$this->leaveService->create($validated);
 
         return redirect('/leave/create')->with('success', 'Apply success.');

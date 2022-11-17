@@ -21,29 +21,12 @@ class LeaveRepository
     public function update(int $id, array $params )
     {
         $leave = $this->get( $id );
-        if(isset($params['start_at'])) {
-            $leave->start_at = $params['start_at'];
-        }
-
-        if(isset($params['end_at'])) {
-            $leave->end_at = $params['end_at'];
-        }
-
-        if(isset($params['hours'])) {
-            $leave->hours = $params['hours'];
-        }
-
-        if(isset($params['status'])) {
-            $leave->status = $params['status'];
-        }
-
-        if(isset($params['type'])) {
-            $leave->type = $params['type'];
-        }
-
-        if(isset($params['reason'])) {
-            $leave->reason = $params['reason'];
-        }
+        $leave->start_at = $params['start_at'];
+        $leave->end_at = $params['end_at'];
+        $leave->hours = $params['hours'];
+        $leave->status = $params['status'];
+        $leave->type = $params['type'];
+        $leave->reason = $params['reason'];
 
         $leave->save();
 
