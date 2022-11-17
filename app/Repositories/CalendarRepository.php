@@ -21,6 +21,7 @@ class CalendarRepository
 	public function updateByDate(int $date, array $params)
 	{
 		$calendar = $this->getByDate( $date );
+		// create date if it doesn't exist
 		if(!$calendar) {
 			$calendar = $this->create($params);
 		} else {
