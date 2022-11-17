@@ -83,7 +83,8 @@ class CalendarController extends Controller
      */
     public function update(CalendarUpdateRequest $calendarUpdateRequest, string $date)
     {
-        $this->calendarService->updateByDate($date, $calendarUpdateRequest->all());
+        $validated = $calendarUpdateRequest->validated();
+        $this->calendarService->updateByDate($date, $validated);
         $this->leaveService->updateByDate($date);
 
         return redirect('/leave')->with('success', 'Update calendar success.');

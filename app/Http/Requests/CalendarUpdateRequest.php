@@ -24,7 +24,8 @@ class CalendarUpdateRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			'is_holiday' => 'required'
+			'is_holiday'	=> 'required|numeric',
+			'memo'			=> 'nullable'
 		];
 	}
 
@@ -35,7 +36,8 @@ class CalendarUpdateRequest extends FormRequest
 	public function messages()
 	{
 		return [
-			'is_holiday.required' => 'Holiday can not null. '
+			'is_holiday.required'	=> 'Holiday can not null.',
+			'is_holiday.numeric'	=> 'Holiday must be number.',
 		];
 	}
 }
