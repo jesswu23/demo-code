@@ -49,8 +49,8 @@ class CustomAuthController extends Controller
 
 	public function customRegistration(CustomRegistrationRequest $CustomRegistrationRequest)
 	{
-		// create user
-		$result = $this->userService->create($CustomRegistrationRequest->all());
+		$validated = $CustomRegistrationRequest->validated();
+		$result = $this->userService->create($validated);
 
 		return redirect("login")->withSuccess( 'Registration success, please login' );
 	}
