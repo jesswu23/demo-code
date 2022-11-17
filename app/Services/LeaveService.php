@@ -129,10 +129,18 @@ Class LeaveService
 			// check if it's a holiday
 			if(!$result->where('date', date('Ymd', $current_date))->all()) {
 				$date_hour = 8; // default 8 hour
-				if($i == 0) {
-					$date_hour = ($start_hour == '14') ? 4 : 8;
-				} else if($i == $diff_days){
-					$date_hour = ($end_hour == '13') ? 4 : 8;
+
+				// confirm whether to ask for leave for more than one day
+				if($diff_days > 0) {
+					if($i == 0) {
+						$date_hour = ($start_hour == '14') ? 4 : 8;
+					} else if($i == $diff_days){
+						$date_hour = ($end_hour == '13') ? 4 : 8;
+					}
+				} else {
+					if(($start_hour == '9' && $end_hour == '13') || $start_hour == '14' && $end_hour == '18') {
+						$date_hour = 4;
+					}
 				}
 
 				$total_hours += $date_hour;
