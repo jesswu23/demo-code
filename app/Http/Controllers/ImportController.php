@@ -31,9 +31,9 @@ class ImportController extends Controller
 		if($request->importFile->isValid()) {
 			Excel::import($this->calendarsImport, $request->importFile);
 
-			return redirect("import")->withSuccess( 'Import success');
+			return redirect("import")->with('success', 'Import success.');
 		} else {
-			return redirect("import")->withError( 'Import failure' );
+			return redirect("import")->with('error', 'Import success.');
 		}
 	}
 }

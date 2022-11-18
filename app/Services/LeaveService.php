@@ -21,19 +21,24 @@ Class LeaveService
 	public function create(array $params)
 	{
 		$params = $this->formatParams($params);
-		$result = $this->leaveRepository->create($params);
+		$leave = $this->leaveRepository->create($params);
 
-		return $result;
+		return $leave;
 	}
 
 	public function update(int $id, array $params)
 	{
 		$params = $this->formatParams($params);
-		$result = $this->leaveRepository->update($id, $params);
+		$leave = $this->leaveRepository->update($id, $params);
 
-		return $result;
+		return $leave;
 	}
 
+	/**
+	 * update leave hour by date
+	 * @param  string $date
+	 * @return boolean
+	 */
 	public function updateByDate(string $date)
 	{
 		$date_object = Carbon::create($date);
@@ -102,43 +107,45 @@ Class LeaveService
 
 	/**
 	 * Calculate leave hours
-	 * @param  string $start_datetime leave start datetime
-	 * @param  string $end_datetime   leave end datetime
+	 * @param  string $startDatetime leave start datetime
+	 * @param  string $endDatetime   leave end datetime
 	 * @return int             leave hours
 	 */
-	protected function getLeaveHours(string $start_datetime, string $end_datetime)
+	protected function getLeaveHours(string $startDatetime, string $endDatetime)
 	{
-		$start_datetime_object = Carbon::create($start_datetime);
-    	$end_datetime_object = Carbon::create($end_datetime);
+		$startDatetimeObject = Carbon::create($startDatetime);
+    	$endDatetimeObject = Carbon::create($endDatetime);
 
-		$start_date = $start_datetime_object->format('Ymd'); // The database format is YYYYMMDD
-		$start_hour = $start_datetime_object->hour;
-		$end_date = $end_datetime_object->format('Ymd'); // The database format is YYYYMMDD
-		$end_hour = $end_datetime_object->hour;
-		$diff_days = $start_datetime_object->diffInDays($end_datetime_object);
+		$startDate = $startDatetimeObject->format('Ymd'); // The database format is YYYYMMDD
+		$startHour = $startDatetimeObject->hour;
+		$endDate = $endDatetimeObject->format('Ymd'); // The database format is YYYYMMDD
+		$endHour = $endDatetimeObject->hour;
+		$diffDays = $startDatetimeObject->diffInDays($endDatetimeObject);
 
-		$current_date = $start_datetime_object->timestamp;
-		$last_date    = $end_datetime_object->timestamp;
+		$currentDate = $startDatetimeObject->timestamp;
+		$lastDate    = $endDatetimeObject->timestamp;
 
 		// get holiday
-		$result = $this->calendarRepository->getHolidayByDateRange($start_date, $end_date);
+		$holidayList = $this->calendarRepository->getHolidayByDateRange($startDate, $endDate);
 
 		$i = 0;
 		$total_hours = 0;
-		while ($current_date <= $last_date) {
+		while ($currentDate <= $lastDate) {
 			// check if it's a holiday
-			if(!$result->where('date', date('Ymd', $current_date))->all()) {
+			if(!$holidayList->where('date', date('Ymd', $currentDate))->all()) {
 				$date_hour = 8; // default 8 hour
 
 				// confirm whether to ask for leave for more than one day
-				if($diff_days > 0) {
+				if($diffDays > 0) {
 					if($i == 0) {
-						$date_hour = ($start_hour == '14') ? 4 : 8;
-					} else if($i == $diff_days){
-						$date_hour = ($end_hour == '13') ? 4 : 8;
+						// check start date hour
+						$date_hour = ($startHour === 14 && $endHour === 18) ? 4 : 8;
+					} else if($i == $diffDays){
+						// check end date hour
+						$date_hour = ($startHour === 9 && $endHour === 13) ? 4 : 8;
 					}
 				} else {
-					if(($start_hour == '9' && $end_hour == '13') || $start_hour == '14' && $end_hour == '18') {
+					if(($startHour == '9' && $endHour == '13') || $startHour == '14' && $endHour == '18') {
 						$date_hour = 4;
 					}
 				}
@@ -146,7 +153,7 @@ Class LeaveService
 				$total_hours += $date_hour;
 			}
 
-			$current_date = strtotime('+1 day', $current_date);
+			$currentDate = strtotime('+1 day', $currentDate);
 			++$i;
 		}
 
@@ -155,16 +162,16 @@ Class LeaveService
 
 	/**
 	 * combine leave date and leave time
-	 * @param  string $start_date leave start date
+	 * @param  string $startDate leave start date
 	 * @param  string $start_time leave start time
-	 * @param  string $end_date   leave end date
+	 * @param  string $endDate   leave end date
 	 * @param  string $end_time   leave end time
 	 * @return array             leave start datetime and leave end datetime
 	 */
-	protected function combineDateTime(string $start_date, string $start_time, string $end_date, string $end_time)
+	protected function combineDateTime(string $startDate, string $start_time, string $endDate, string $end_time)
 	{
-		$combine_date['start_datetime'] = $start_date . ' ' . $start_time;
-		$combine_date['end_datetime'] = $end_date . ' ' . $end_time;
+		$combine_date['start_datetime'] = $startDate . ' ' . $start_time;
+		$combine_date['end_datetime'] = $endDate . ' ' . $end_time;
 
 		return $combine_date;
 	}
@@ -176,15 +183,15 @@ Class LeaveService
 	 */
 	protected function formatParams(array $params)
 	{
-		$result = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
+		$combineDateTime = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
 
-		$start_datetime = $result['start_datetime'];
-		$end_datetime = $result['end_datetime'];
-		$total_hours = $this->getLeaveHours($start_datetime, $end_datetime);
+		$startDatetime = $combineDateTime['start_datetime'];
+		$endDatetime = $combineDateTime['end_datetime'];
+		$total_hours = $this->getLeaveHours($startDatetime, $endDatetime);
 
 		$params['hours']	= $total_hours;
-		$params['start_at']	= $start_datetime;
-		$params['end_at']	= $end_datetime;
+		$params['start_at']	= $startDatetime;
+		$params['end_at']	= $endDatetime;
 		$params['user_id']	= Auth::user()->id;
 
 		return $params;

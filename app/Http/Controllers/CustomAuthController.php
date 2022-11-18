@@ -36,10 +36,10 @@ class CustomAuthController extends Controller
 		if (Auth::guard($this->guard)->attempt($credentials)) {
 			$request->session()->regenerate();
 
-			return redirect()->intended('dashboard')->withSuccess( 'logged in' );
+			return redirect()->intended('dashboard')->with('success', 'Logged in');
 		}
 
-		return redirect("login")->withError( 'Email or password invalid' );
+		return redirect("login")->with('error', 'Email or password invalid');
 	}
 
 	public function registration()
@@ -52,7 +52,7 @@ class CustomAuthController extends Controller
 		$validated = $CustomRegistrationRequest->validated();
 		$result = $this->userService->create($validated);
 
-		return redirect("login")->withSuccess( 'Registration success, please login' );
+		return redirect("login")->with('success', 'Registration success, please login');
 	}
 
 	public function logOut(Request $request)
@@ -63,6 +63,6 @@ class CustomAuthController extends Controller
 
 		$request->session()->regenerateToken();
 
-		return Redirect('login')->withSuccess( 'logged out' );
+		return Redirect('login')->with('success', 'Logged out');
 	}
 }

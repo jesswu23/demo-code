@@ -85,6 +85,7 @@ class CalendarController extends Controller
     {
         $validated = $calendarUpdateRequest->validated();
         $this->calendarService->updateByDate($date, $validated);
+        // when changing the calendar, check the leave hours synchronously
         $this->leaveService->updateByDate($date);
 
         return redirect('/leave')->with('success', 'Update calendar success.');

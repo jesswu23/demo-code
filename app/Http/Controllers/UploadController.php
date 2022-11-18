@@ -22,11 +22,11 @@ class UploadController extends Controller
 	public function uploadFile(Request $request)
 	{
 		if($request->file('uploadFile')->isValid()) {
-			$result = $this->uploadService->handleUploadedFile($request->uploadFile);
+			$upload = $this->uploadService->handleUploadedFile($request->uploadFile);
 
-			return redirect("upload")->withSuccess('Upload success. file path : ' . $result->file);
+			return redirect("upload")->with('success', 'Upload success. file path : ' . $upload->file);
 		} else {
-			return redirect("upload")->withError('Upload failure');
+			return redirect("upload")->with('error', 'Upload failure');
 		}
 	}
 }

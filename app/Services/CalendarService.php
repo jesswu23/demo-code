@@ -24,13 +24,13 @@ Class CalendarService
 
 	public function updateByDate(string $date, array $params)
 	{
-		$format_date = $this->formatDate($date, "Ymd"); // The database format is YYYYMMDD
+		$formatDate = $this->formatDate($date, "Ymd"); // The database format is YYYYMMDD
 
 		// when the date does not exist, it will need to be written
-		$params['date'] = $format_date;
+		$params['date'] = $formatDate;
 		$params['week'] = $this->getWeek($date);
 
-		$calendar = $this->calendarRepository->updateByDate($format_date, $params);
+		$calendar = $this->calendarRepository->updateByDate($formatDate, $params);
 
 		return $calendar;
 	}
@@ -49,15 +49,15 @@ Class CalendarService
 		$week = $date_object->dayOfWeek; // $week = 0 ~ 6, 0 means sunday
 
 		switch ($week) {
-			case '0': $week_name = '日'; break;
-			case '1': $week_name = '一'; break;
-			case '2': $week_name = '二'; break;
-			case '3': $week_name = '三'; break;
-			case '4': $week_name = '四'; break;
-			case '5': $week_name = '五'; break;
-			case '6': $week_name = '六'; break;
+			case '0': $weekName = '日'; break;
+			case '1': $weekName = '一'; break;
+			case '2': $weekName = '二'; break;
+			case '3': $weekName = '三'; break;
+			case '4': $weekName = '四'; break;
+			case '5': $weekName = '五'; break;
+			case '6': $weekName = '六'; break;
 		}
 
-		return $week_name;
+		return $weekName;
 	}
 }

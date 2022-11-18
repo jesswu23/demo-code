@@ -35,7 +35,7 @@ class CalendarRepository
 
 	public function getHolidayByDateRange(int $start_date, int $end_date)
 	{
-		$calendars = Calendar::where('date', '>=', $start_date)->where('date', '<=', $end_date)->where('is_holiday', '=', '2')->get();
+		$calendars = Calendar::whereBetween('date', [$start_date, $end_date])->where('is_holiday', '=', '2')->get();
 
 		return $calendars;
 	}
