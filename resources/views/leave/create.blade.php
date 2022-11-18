@@ -28,7 +28,6 @@
 						<span class="text-danger">{{ $errors->first('start_time') }}</span>
 						@endif
 					</div>
-
 					<div class="mb-3">
 						<label for="end_date" class="form-label">End date</label>
 						<input class="form-control" type="text" id="end_date" name="end_date" placeholder="ex:2022-01-01">
@@ -47,7 +46,6 @@
 						<span class="text-danger">{{ $errors->first('end_time') }}</span>
 						@endif
 					</div>
-
 					<div class="mb-3 mt-3">
 						<label for="type" class="form-label">Type</label>
 						<select class="form-select" aria-label="Default select example" id="type" name="type">
@@ -60,7 +58,6 @@
 						<span class="text-danger">{{ $errors->first('type') }}</span>
 						@endif
 					</div>
-
 					<div class="mb-3">
 						<label for="reason" class="form-label">Reason</label>
 						<textarea class="form-control" id="reason" name="reason" rows="3"></textarea>
@@ -68,7 +65,6 @@
 						<span class="text-danger">{{ $errors->first('reason') }}</span>
 						@endif
 					</div>
-
 					<button type="submit" id="sendBtn" class="btn btn-primary">Submit</button>
 				</form>
 			</div>

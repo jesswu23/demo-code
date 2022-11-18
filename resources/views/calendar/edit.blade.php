@@ -12,13 +12,12 @@
 						<label for="start_date" class="form-label">Date</label>
 						<input class="form-control" type="text" aria-label="Disabled input example" value="{{ $date; }}" disabled>
 					</div>
-
 					<div class="mb-3 mt-3">
 						<label for="is_holiday" class="form-label">Holiday</label>
 						<select class="form-select" aria-label="Default select example" id="is_holiday" name="is_holiday">
-							<option @if($calendar && $calendar->is_holiday == "") selected @endif value="">Please select</option>
-							<option @if($calendar && $calendar->is_holiday == '2') selected @endif value="2">Yes</option>
-							<option @if($calendar && $calendar->is_holiday == '0') selected @endif value="0">No</option>
+							<option value="" @selected($calendar && $calendar->is_holiday == '')>Please select</option>
+							<option value="2" @selected($calendar && $calendar->is_holiday == '2')>Yes</option>
+							<option value="0" @selected($calendar && $calendar->is_holiday == '0')>No</option>
 						</select>
 						@if ($errors->has('is_holiday'))
 						<span class="text-danger">{{ $errors->first('is_holiday') }}</span>
