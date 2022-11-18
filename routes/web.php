@@ -26,13 +26,11 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::prefix('upload')->controller(UploadController::class)->group(function () {
 		Route::get('/', 'index');
-		Route::get('index', 'index');
 		Route::post('upload_file', 'uploadFile');
 	});
 
 	Route::prefix('import')->controller(ImportController::class)->group(function () {
 		Route::get('/', 'index');
-		Route::get('index', 'index');
 		Route::post('import_file', 'importFile');
 	});
 
@@ -42,7 +40,6 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::prefix('leave')->controller(LeaveController::class)->group(function () {
 		Route::get('/', 'index');
-		Route::get('index', 'index');
 		Route::get('events', 'events');
 		Route::get('create', 'create');
 		Route::post('store', 'store');
