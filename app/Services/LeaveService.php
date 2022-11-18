@@ -120,44 +120,31 @@ Class LeaveService
 		$startHour = $startDatetimeObject->hour;
 		$endDate = $endDatetimeObject->format('Ymd'); // The database format is YYYYMMDD
 		$endHour = $endDatetimeObject->hour;
-		$diffDays = $startDatetimeObject->diffInDays($endDatetimeObject);
 
-		$currentDate = $startDatetimeObject->timestamp;
-		$lastDate    = $endDatetimeObject->timestamp;
+		// get calendar list
+		$calendarList = $this->calendarRepository->getCalendarListByDateRange($startDate, $endDate);
 
-		// get holiday
-		$holidayList = $this->calendarRepository->getHolidayByDateRange($startDate, $endDate);
+		$workdays = 0;
+		foreach ($calendarList as $key => $calendar) {
 
-		$i = 0;
-		$total_hours = 0;
-		while ($currentDate <= $lastDate) {
-			// check if it's a holiday
-			if(!$holidayList->where('date', date('Ymd', $currentDate))->all()) {
-				$date_hour = 8; // default 8 hour
+			$day = 1; // default all day
 
-				// confirm whether to ask for leave for more than one day
-				if($diffDays > 0) {
-					if($i == 0) {
-						// check start date hour
-						$date_hour = ($startHour === 14 && $endHour === 18) ? 4 : 8;
-					} else if($i == $diffDays){
-						// check end date hour
-						$date_hour = ($startHour === 9 && $endHour === 13) ? 4 : 8;
-					}
-				} else {
-					if(($startHour == '9' && $endHour == '13') || $startHour == '14' && $endHour == '18') {
-						$date_hour = 4;
-					}
-				}
-
-				$total_hours += $date_hour;
+			// confirm the start date and end date of leave days
+			if(($calendar->date == $startDate) && $startHour === 14 ) {
+				$day = 0.5;
+			} else if(($calendar->date == $endDate) && $endHour === 13 ) {
+				$day = 0.5;
 			}
 
-			$currentDate = strtotime('+1 day', $currentDate);
-			++$i;
+			// check if it's a workdays
+			if($calendar->is_holiday === 0) {
+				$workdays += $day;
+			}
 		}
 
-		return $total_hours;
+		$totalHours = $workdays * 8;
+
+		return $totalHours;
 	}
 
 	/**
@@ -187,9 +174,9 @@ Class LeaveService
 
 		$startDatetime = $combineDateTime['start_datetime'];
 		$endDatetime = $combineDateTime['end_datetime'];
-		$total_hours = $this->getLeaveHours($startDatetime, $endDatetime);
+		$totalHours = $this->getLeaveHours($startDatetime, $endDatetime);
 
-		$params['hours']	= $total_hours;
+		$params['hours']	= $totalHours;
 		$params['start_at']	= $startDatetime;
 		$params['end_at']	= $endDatetime;
 		$params['user_id']	= Auth::user()->id;
