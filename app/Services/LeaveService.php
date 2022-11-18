@@ -47,9 +47,9 @@ Class LeaveService
 		// Get data after this date
 		$leaves = $this->leaveRepository->getByDate($date);
 		foreach ($leaves as $key => $leave) {
-			$params['hours'] = $this->getLeaveHours($leave['start_at'], $leave['end_at']);
+			$hours = $this->getLeaveHours($leave['start_at'], $leave['end_at']);
 
-			$this->leaveRepository->update($leave->id, $params);
+			$this->leaveRepository->updateHours($leave->id, $hours);
 		}
 
 		return true;

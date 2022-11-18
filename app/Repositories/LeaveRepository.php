@@ -33,6 +33,16 @@ class LeaveRepository
         return $leave;
     }
 
+    public function updateHours(int $id, int $hours)
+    {
+        $leave = $this->get( $id );
+        $leave->hours = $hours;
+
+        $leave->save();
+
+        return $leave;
+    }
+
     public function getByDate(string $date)
     {
         $leaves = Leave::where('start_at', '<=', $date)->where('end_at', '>=', $date)->get();
