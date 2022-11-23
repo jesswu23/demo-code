@@ -215,7 +215,7 @@ Class LeaveService
 	 * @param  string $startDatetime leave start datetime
 	 * @param  string $endDatetime   leave end datetime
 	 * @param  array  $leaveTypeInfo leave type info
-	 * @return int             leave hours
+	 * @return array             leave hours
 	 */
 	protected function getLeaveHours(string $startDatetime, string $endDatetime, array $leaveTypeInfo)
 	{
