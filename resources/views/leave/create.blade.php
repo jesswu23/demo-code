@@ -50,9 +50,9 @@
 						<label for="type" class="form-label">Type</label>
 						<select class="form-select" aria-label="Default select example" id="type" name="type">
 							<option value="" selected>Please select</option>
-							<option value="1">特休</option>
-							<option value="2">事假</option>
-							<option value="3">病假</option>
+							@foreach ($leaveTypes as $id => $leaveType)
+								<option value="{{ $id }}">{{ $leaveType['name'] }}</option>
+							@endforeach
 						</select>
 						@if ($errors->has('type'))
 						<span class="text-danger">{{ $errors->first('type') }}</span>

@@ -7,6 +7,8 @@ use App\Services\LeaveService;
 use App\Services\CalendarService;
 use App\Http\Requests\LeaveStoreRequest;
 use App\Http\Requests\LeaveUpdateRequest;
+use Config;
+use Exception;
 
 class LeaveController extends Controller
 {
@@ -36,7 +38,10 @@ class LeaveController extends Controller
 	 */
 	public function create()
 	{
-		return view('leave.create');
+		$leaveTypes = $this->leaveService->getLeaveTypes();
+
+		return view('leave.create')
+				->with('leaveTypes', $leaveTypes);
 	}
 
 	/**
@@ -48,9 +53,13 @@ class LeaveController extends Controller
 	public function store(LeaveStoreRequest $leaveStoreRequest)
 	{
 		$validated = $leaveStoreRequest->validated();
-		$this->leaveService->create($validated);
+		$result = $this->leaveService->create($validated);
 
-        return redirect('/leave/create')->with('success', 'Apply success.');
+		if(!$result) {
+			throw new Exception("Apply failure");
+		} else {
+			return redirect('/leave/create')->with('success', 'Apply success');
+		}
 	}
 
 	/**
@@ -73,9 +82,11 @@ class LeaveController extends Controller
 	public function edit(int $id)
 	{
 		$leave = $this->leaveService->get($id);
+		$leaveTypes = $this->leaveService->getLeaveTypes();
 
         return view('leave/edit')
-                ->with('leave', $leave);
+                ->with('leave', $leave)
+                ->with('leaveTypes', $leaveTypes);
 	}
 
 	/**
@@ -88,9 +99,13 @@ class LeaveController extends Controller
 	public function update(LeaveUpdateRequest $leaveUpdateRequest, int $id)
 	{
 		$validated = $leaveUpdateRequest->validated();
-		$this->leaveService->update($id, $validated);
+		$result = $this->leaveService->update($id, $validated);
 
-		return redirect('/leave/edit/' . $id)->with('success', 'Update success.');
+		if(!$result) {
+			throw new Exception("Update failure");
+		} else {
+			return redirect('/leave/edit/' . $id)->with('success', 'Update success.');
+		}
 	}
 
 	/**

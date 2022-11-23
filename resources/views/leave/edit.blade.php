@@ -71,9 +71,9 @@
 						<label for="type" class="form-label">Type</label>
 						<select class="form-select" aria-label="Default select example" id="type" name="type">
 							<option value="" @selected($leave->type == '')>Please select</option>
-							<option value="1" @selected($leave->type == '1')>特休</option>
-							<option value="2" @selected($leave->type == '2')>事假</option>
-							<option value="3" @selected($leave->type == '3')>病假</option>
+							@foreach ($leaveTypes as $id => $leaveType)
+								<option value="{{ $id }}" @selected($leave->type == $id)>{{ $leaveType['name'] }}</option>
+							@endforeach
 						</select>
 						@if ($errors->has('type'))
 						<span class="text-danger">{{ $errors->first('type') }}</span>
@@ -81,7 +81,7 @@
 					</div>
 					<div class="mb-3">
 						<label for="reason" class="form-label">Reason</label>
-						<textarea class="form-control" id="reason" name="reason" rows="3">{{ $leave->reason}}</textarea>
+						<textarea class="form-control" id="reason" name="reason" rows="3">{{ $leave->reason }}</textarea>
 						@if ($errors->has('reason'))
 						<span class="text-danger">{{ $errors->first('reason') }}</span>
 						@endif

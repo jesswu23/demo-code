@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\LeaveRepository;
 use App\Repositories\CalendarRepository;
 use Carbon\Carbon;
+use App\Enums\LeaveType;
+use Config;
 
 Class LeaveService
 {
@@ -21,6 +23,11 @@ Class LeaveService
 	public function create(array $params)
 	{
 		$params = $this->formatParams($params);
+		$result = $this->checkLeaveHour($params);
+		if(!$result) {
+			return $result;
+		}
+
 		$leave = $this->leaveRepository->create($params);
 
 		return $leave;
@@ -29,6 +36,11 @@ Class LeaveService
 	public function update(int $id, array $params)
 	{
 		$params = $this->formatParams($params);
+		$result = $this->checkLeaveHour($params, $params['status']);
+		if(!$result) {
+			return $result;
+		}
+
 		$leave = $this->leaveRepository->update($id, $params);
 
 		return $leave;
@@ -106,45 +118,142 @@ Class LeaveService
 	}
 
 	/**
+	 * Get leave type infomation from config
+	 * @return array
+	 */
+	public function getLeaveTypes()
+	{
+		return Config::get('leave.leave_types');
+	}
+
+	/**
+	 * check leave hours
+	 * @param  array       $params
+	 * @param  int|integer $status leave approval status, default 1 means already applied
+	 * @return bool
+	 */
+	protected function checkLeaveHour(array $params, int $status = 1)
+	{
+		// if status are reject, leave hours are not judged
+		if($status === 3) {
+			return true;
+		}
+
+		// get leave type
+		$learveTypes = $this->getLeaveTypes();
+		$leaveTypeInfo = (isset($params['type'])) ? ($learveTypes[$params['type']]) : '';
+		$identify = ($leaveTypeInfo) ? $leaveTypeInfo['identify'] : '';
+		if(!$identify) {
+			return false;
+		}
+
+		// get leave type limit infomation
+		$limitDayInfo = LeaveType::getLimitDayInfo($identify);
+		if($limitDayInfo['status'] === 'error') {
+			return false;
+		}
+
+		// get leave limit days and converted to hour
+		$limitHours = $limitDayInfo['limit_day'] * 8;
+
+		$startDatetimeObject = Carbon::create($params['start_at']);
+		$endDatetimeObject = Carbon::create($params['end_at']);
+
+		$startYear = $startDatetimeObject->year;
+		$endYear = $endDatetimeObject->year;
+
+		$userYearLeaveHour = $this->getLeaveHours($params['start_at'], $params['end_at'], $leaveTypeInfo);
+		foreach ($userYearLeaveHour as $year => $applyHour) {
+			if(!isset($userYearLeaveHour[$year])) {
+				$userYearLeaveHour[$year] = 0; // default passed leave hours are 0
+			}
+
+			$startDate = $year . '-' . $leaveTypeInfo['start_date'] ;
+			$endDate = $year . '-' . $leaveTypeInfo['end_date'] ;
+
+			// get the number of leave hours passed by the user
+			$userLeaveHours = $this->leaveRepository->getLeaveTypeTotalHourByUser($params['user_id'], $params['type'], $startDate, $endDate);
+
+			if($userLeaveHours) {
+				foreach ($userLeaveHours as $key => $userLeaveHour) {
+					// Get Applied Leave Hours
+					$getLeaveHours = $this->getLeaveHours($userLeaveHour['start_at'], $userLeaveHour['end_at'], $leaveTypeInfo);
+
+					$userYearLeaveHour[$year] += $getLeaveHours[$year];
+
+					// check it's over the limit hour and limit hour isn't 0
+					if($userYearLeaveHour[$year] > $limitHours && $limitHours !== 0) {
+						return false;
+
+						break;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Calculate leave hours
 	 * @param  string $startDatetime leave start datetime
 	 * @param  string $endDatetime   leave end datetime
 	 * @return int             leave hours
 	 */
-	protected function getLeaveHours(string $startDatetime, string $endDatetime)
+	protected function getLeaveHours(string $startDatetime, string $endDatetime, array $leaveType)
 	{
 		$startDatetimeObject = Carbon::create($startDatetime);
-    	$endDatetimeObject = Carbon::create($endDatetime);
+		$endDatetimeObject = Carbon::create($endDatetime);
 
 		$startDate = $startDatetimeObject->format('Ymd'); // The database format is YYYYMMDD
+		$startYear = $startDatetimeObject->year;
 		$startHour = $startDatetimeObject->hour;
 		$endDate = $endDatetimeObject->format('Ymd'); // The database format is YYYYMMDD
+		$endYear = $endDatetimeObject->year;
 		$endHour = $endDatetimeObject->hour;
 
-		// get calendar list
-		$calendarList = $this->calendarRepository->getCalendarListByDateRange($startDate, $endDate);
-
-		$workdays = 0;
-		foreach ($calendarList as $key => $calendar) {
-
-			$day = 1; // default all day
-
-			// confirm the start date and end date of leave days
-			if(($calendar->date == $startDate) && $startHour === 14 ) {
-				$day = 0.5;
-			} else if(($calendar->date == $endDate) && $endHour === 13 ) {
-				$day = 0.5;
-			}
-
-			// check if it's a workdays
-			if($calendar->is_holiday === 0) {
-				$workdays += $day;
-			}
+		$leaveYear[] = $startYear;
+		if($startYear !== $endYear) {
+			$leaveYear[] = $endYear;
 		}
 
-		$totalHours = $workdays * 8;
+		$yearLeaveHour = [];
+		foreach ($leaveYear as $year) {
+			if($year === $startYear && $year !== $endYear) {
+				$startDate = $startDatetimeObject->format('Ymd');
+				$endDate = $year . str_replace('-', '', $leaveType['end_date']);
+			}
 
-		return $totalHours;
+			if($year !== $startYear && $year === $endYear) {
+				$startDate = $year . str_replace('-', '', $leaveType['start_date']);
+				$endDate = $endDatetimeObject->format('Ymd');
+			}
+
+			// get calendar list
+			$calendarList = $this->calendarRepository->getCalendarListByDateRange($startDate, $endDate);
+
+			$workdays = 0;
+			foreach ($calendarList as $key => $calendar) {
+
+				$day = 1; // default all day
+
+				// confirm the start date and end date of leave days
+				if(($calendar->date == $startDate) && $startHour === 14 ) {
+					$day = 0.5;
+				} else if(($calendar->date == $endDate) && $endHour === 13 ) {
+					$day = 0.5;
+				}
+
+				// check if it's a workdays
+				if($calendar->is_holiday === 0) {
+					$workdays += $day;
+				}
+			}
+
+			$workTotalHours[$year] = $workdays * 8;
+		}
+
+		return $workTotalHours;
 	}
 
 	/**
@@ -174,9 +283,13 @@ Class LeaveService
 
 		$startDatetime = $combineDateTime['start_datetime'];
 		$endDatetime = $combineDateTime['end_datetime'];
-		$totalHours = $this->getLeaveHours($startDatetime, $endDatetime);
 
-		$params['hours']	= $totalHours;
+		$learveTypes = $this->getLeaveTypes();
+		$leaveType = (isset($params['type'])) ? ($learveTypes[$params['type']]) : '';
+
+		$totalHours = $this->getLeaveHours($startDatetime, $endDatetime, $leaveType);
+
+		$params['hours']	= array_sum($totalHours);
 		$params['start_at']	= $startDatetime;
 		$params['end_at']	= $endDatetime;
 		$params['user_id']	= Auth::user()->id;
