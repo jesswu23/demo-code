@@ -238,7 +238,7 @@ Class LeaveService
 			$leaveYear[] = $endYear;
 		}
 
-		$yearLeaveHour = [];
+		$workTotalHours = [];
 		foreach ($leaveYear as $year) {
 			if($year === $startYear && $year !== $endYear) {
 				$startDate = $startDatetimeObject->format('Ymd');
