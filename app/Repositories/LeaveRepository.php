@@ -45,7 +45,7 @@ class LeaveRepository
 
 	public function getByDate(string $date)
 	{
-		$leaves = Leave::where('start_at', '<=', $date)->where('end_at', '>=', $date)->get();
+		$leaves = Leave::where('start_at', '>=', $date)->get();
 
 		return $leaves;
 	}

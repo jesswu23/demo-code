@@ -23,6 +23,10 @@ Class LeaveService
 	public function create(array $params)
 	{
 		$params = $this->formatParams($params);
+		if(!$params) {
+			return $params;
+		}
+
 		$result = $this->checkLeaveHour($params);
 		if(!$result) {
 			return $result;
@@ -36,6 +40,10 @@ Class LeaveService
 	public function update(int $id, array $params)
 	{
 		$params = $this->formatParams($params);
+		if(!$params) {
+			return $params;
+		}
+
 		$result = $this->checkLeaveHour($params, $params['status']);
 		if(!$result) {
 			return $result;
@@ -56,12 +64,18 @@ Class LeaveService
 		$date_object = Carbon::create($date);
 		$date = $date_object->format('Y-m-d');
 
+		// get leave type
+		$learveTypes = $this->getLeaveTypes();
+
 		// Get data after this date
 		$leaves = $this->leaveRepository->getByDate($date);
 		foreach ($leaves as $key => $leave) {
-			$hours = $this->getLeaveHours($leave['start_at'], $leave['end_at']);
+			$leaveTypeInfo = (isset($leave['type'])) ? ($learveTypes[$leave['type']]) : '';
+			$totalHours = $this->getLeaveHours($leave['start_at'], $leave['end_at'], $leaveTypeInfo);
 
-			$this->leaveRepository->updateHours($leave->id, $hours);
+			if($totalHours) {
+				$this->leaveRepository->updateHours($leave->id, array_sum($totalHours));
+			}
 		}
 
 		return true;
@@ -179,7 +193,9 @@ Class LeaveService
 					// Get Applied Leave Hours
 					$getLeaveHours = $this->getLeaveHours($userLeaveHour['start_at'], $userLeaveHour['end_at'], $leaveTypeInfo);
 
-					$userYearLeaveHour[$year] += $getLeaveHours[$year];
+					if($getLeaveHours) {
+						$userYearLeaveHour[$year] += $getLeaveHours[$year];
+					}
 
 					// check it's over the limit hour and limit hour isn't 0
 					if($userYearLeaveHour[$year] > $limitHours && $limitHours !== 0) {
@@ -198,10 +214,15 @@ Class LeaveService
 	 * Calculate leave hours
 	 * @param  string $startDatetime leave start datetime
 	 * @param  string $endDatetime   leave end datetime
+	 * @param  array  $leaveTypeInfo leave type info
 	 * @return int             leave hours
 	 */
-	protected function getLeaveHours(string $startDatetime, string $endDatetime, array $leaveType)
+	protected function getLeaveHours(string $startDatetime, string $endDatetime, array $leaveTypeInfo)
 	{
+		if(!$leaveTypeInfo) {
+			return [];
+		}
+
 		$startDatetimeObject = Carbon::create($startDatetime);
 		$endDatetimeObject = Carbon::create($endDatetime);
 
@@ -221,11 +242,11 @@ Class LeaveService
 		foreach ($leaveYear as $year) {
 			if($year === $startYear && $year !== $endYear) {
 				$startDate = $startDatetimeObject->format('Ymd');
-				$endDate = $year . str_replace('-', '', $leaveType['end_date']);
+				$endDate = $year . str_replace('-', '', $leaveTypeInfo['end_date']);
 			}
 
 			if($year !== $startYear && $year === $endYear) {
-				$startDate = $year . str_replace('-', '', $leaveType['start_date']);
+				$startDate = $year . str_replace('-', '', $leaveTypeInfo['start_date']);
 				$endDate = $endDatetimeObject->format('Ymd');
 			}
 
@@ -285,9 +306,12 @@ Class LeaveService
 		$endDatetime = $combineDateTime['end_datetime'];
 
 		$learveTypes = $this->getLeaveTypes();
-		$leaveType = (isset($params['type'])) ? ($learveTypes[$params['type']]) : '';
+		$leaveTypeInfo = (isset($params['type'])) ? ($learveTypes[$params['type']]) : '';
 
-		$totalHours = $this->getLeaveHours($startDatetime, $endDatetime, $leaveType);
+		$totalHours = $this->getLeaveHours($startDatetime, $endDatetime, $leaveTypeInfo);
+		if(!$totalHours) {
+			return false;
+		}
 
 		$params['hours']	= array_sum($totalHours);
 		$params['start_at']	= $startDatetime;
