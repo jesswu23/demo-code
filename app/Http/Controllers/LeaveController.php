@@ -7,7 +7,6 @@ use App\Services\LeaveService;
 use App\Services\CalendarService;
 use App\Http\Requests\LeaveStoreRequest;
 use App\Http\Requests\LeaveUpdateRequest;
-use Config;
 use Exception;
 
 class LeaveController extends Controller
@@ -56,7 +55,7 @@ class LeaveController extends Controller
 		$result = $this->leaveService->create($validated);
 
 		if(!$result) {
-			throw new Exception("Apply failure");
+			return redirect('/leave/create')->with('error', 'Leave hours exceeds the prescribed number of hours');
 		} else {
 			return redirect('/leave/create')->with('success', 'Apply success');
 		}
@@ -102,7 +101,7 @@ class LeaveController extends Controller
 		$result = $this->leaveService->update($id, $validated);
 
 		if(!$result) {
-			throw new Exception("Update failure");
+			return redirect('/leave/edit/' . $id)->with('error', 'Leave hours exceeds the prescribed number of hours');
 		} else {
 			return redirect('/leave/edit/' . $id)->with('success', 'Update success.');
 		}

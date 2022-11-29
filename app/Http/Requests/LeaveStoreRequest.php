@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Enums\LeaveType;
 
 class LeaveStoreRequest extends FormRequest
 {
@@ -23,12 +24,12 @@ class LeaveStoreRequest extends FormRequest
 	 */
 	public function rules()
 	{
-		return [
+        return [
 			'start_date'	=> 'required|regex:/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}\z/i',
 			'start_time'	=> 'required',
 			'end_date'		=> 'required|regex:/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}\z/i',
 			'end_time'		=> 'required',
-			'type'			=> 'required|integer|numeric',
+			'type'			=> 'required|integer|numeric|enum_value:' . LeaveType::class,
 			'reason'		=> 'required'
 		];
 	}
@@ -49,6 +50,7 @@ class LeaveStoreRequest extends FormRequest
 			'type.required'			=> 'Type can not null.',
 			'type.integer'			=> 'Type must be integer.',
 			'type.numeric'			=> 'Type must be number.',
+			'type.enum_value'		=> 'Type is undefined.',
 			'reason.required'		=> 'Reason can not null.'
 		];
 	}

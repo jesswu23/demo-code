@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Enums\LeaveType;
+use App\Enums\LeaveStatus;
 
 class LeaveUpdateRequest extends FormRequest
 {
@@ -28,8 +30,8 @@ class LeaveUpdateRequest extends FormRequest
 			'start_time'	=> 'required',
 			'end_date'		=> 'required|regex:/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}\z/i',
 			'end_time'		=> 'required',
-			'status'		=> 'required|integer|numeric',
-			'type'			=> 'required|integer|numeric',
+			'status'		=> 'required|integer|numeric|enum_value:' . LeaveStatus::class,
+			'type'			=> 'required|integer|numeric|enum_value:' . LeaveType::class,
 			'reason'		=> 'required'
 		];
 	}
@@ -50,9 +52,11 @@ class LeaveUpdateRequest extends FormRequest
 			'status.required'		=> 'Apply status can not null.',
 			'status.integer'		=> 'Apply status must be integer.',
 			'status.numeric'		=> 'Apply status must be number.',
+			'status.enum_value'		=> 'Apply status is undefined.',
 			'type.required'			=> 'Type can not null.',
 			'type.integer'			=> 'Type must be integer.',
 			'type.numeric'			=> 'Type must be number.',
+			'type.enum_value'		=> 'Type is undefined.',
 			'reason.required'		=> 'Reason can not null.'
 		];
 	}

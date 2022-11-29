@@ -2,35 +2,20 @@
 
 namespace App\Enums;
 
-enum LeaveType: int
+use BenSampo\Enum\Enum;
+
+final class LeaveType extends Enum
 {
-	const sickLeave				= 30;
-	const personalLeave			= 14;
-	const menstruationLeave		= 12;
-	const funeralLeave			= 0;
-	const workrelatedSickLeave	= 0;
-	const maternityLeave		= 0;
-	const maternityRestLeave	= 30;
-	const paternityLeave		= 7;
-	const prenatalVisitLeave	= 7;
-	const familyCareLeave		= 7;
-	const officialLeave			= 0;
-
-	public static function getLimitDayInfo(string $leaveType): array
-	{
-		static $limitDayInfo;
-
-		if (!isset($limitDayInfo)) {
-			$oClass = new \ReflectionClass(__CLASS__);
-			$constants = $oClass->getConstants();
-
-			if(!isset($constants[$leaveType])) {
-				$limitDayInfo = ['status' => 'error', 'limit_day' => ''];
-			} else {
-				$limitDayInfo = ['status' => 'success', 'limit_day' => $constants[$leaveType]];
-			}
-		}
-
-		return $limitDayInfo;
-	}
+	const SICK_LEAVE				= '1';
+	const PERSONAL_LEAVE			= '2';
+	const MENSTRUATION_LEAVE		= '3';
+	const FUNERAL_LEAVE				= '4';
+	const WORKRELATED_SICK_LEAVE	= '5';
+	const MATERNITY_LEAVE			= '6';
+	const MATERNITY_REST_LEAVE		= '7';
+	const PATERNITY_LEAVE			= '8';
+	const PRENATAL_VISIT_LEAVE		= '9';
+	const FAMILY_CARE_LEAVE			= '10';
+	const OFFICIAL_LEAVE			= '11';
+	const SPECIAL_LEAVE				= '12';
 }
