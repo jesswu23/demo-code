@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\LeaveService;
 use App\Services\CalendarService;
 use App\Http\Requests\LeaveStoreRequest;
 use App\Http\Requests\LeaveUpdateRequest;
-use Exception;
+use App\Enums\LeaveType;
 
 class LeaveController extends Controller
 {
@@ -37,7 +36,7 @@ class LeaveController extends Controller
 	 */
 	public function create()
 	{
-		$leaveTypes = $this->leaveService->getLeaveTypes();
+		$leaveTypes = LeaveType::getLeaveTypeName();
 
 		return view('leave.create')
 				->with('leaveTypes', $leaveTypes);
@@ -81,11 +80,11 @@ class LeaveController extends Controller
 	public function edit(int $id)
 	{
 		$leave = $this->leaveService->get($id);
-		$leaveTypes = $this->leaveService->getLeaveTypes();
+		$leaveTypes = LeaveType::getLeaveTypeName();
 
-        return view('leave/edit')
-                ->with('leave', $leave)
-                ->with('leaveTypes', $leaveTypes);
+		return view('leave/edit')
+				->with('leave', $leave)
+				->with('leaveTypes', $leaveTypes);
 	}
 
 	/**

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Leave;
+use App\Enums\LeaveStatus;
 
 class LeaveRepository
 {
@@ -56,10 +57,10 @@ class LeaveRepository
 	 * @param  int         $type       leave type id
 	 * @param  string      $start_date leave start date time
 	 * @param  string      $end_date   leave end date time
-	 * @param  int|integer $status     approval status；default 2 means pass
+	 * @param  int|integer $status     approval status；default 2
 	 * @return collection
 	 */
-	public function getLeaveTypeTotalHourByUser(int $user_id, int $type, string $start_date, string $end_date, int $status = 2)
+	public function getLeaveTypeTotalHourByUser(int $user_id, int $type, string $start_date, string $end_date, int $status = LeaveStatus::PASSED)
 	{
 		$leaves = Leave::where('user_id', '=', $user_id)
 						->where('type', '=', $type)

@@ -9,94 +9,94 @@ use App\Http\Requests\CalendarUpdateRequest;
 
 class CalendarController extends Controller
 {
-    protected $calendarService;
+	protected $calendarService;
 
-    public function __construct(CalendarService $calendarService, LeaveService $leaveService)
-    {
-        $this->calendarService = $calendarService;
-        $this->leaveService = $leaveService;
-    }
+	public function __construct(CalendarService $calendarService, LeaveService $leaveService)
+	{
+		$this->calendarService = $calendarService;
+		$this->leaveService = $leaveService;
+	}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function index()
+	{
+		//
+	}
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function create()
+	{
+		//
+	}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function store(Request $request)
+	{
+		//
+	}
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(int $id)
-    {
-        //
-    }
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function show(int $id)
+	{
+		//
+	}
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  string  $date
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(string $date)
-    {
-        $calendar = $this->calendarService->getByDate($date);
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  string  $date
+	 * @return \Illuminate\Http\Response
+	 */
+	public function edit(string $date)
+	{
+		$calendar = $this->calendarService->getByDate($date);
 
-        return view('calendar/edit')
-                ->with('date', $date)
-                ->with('calendar', $calendar);
-    }
+		return view('calendar/edit')
+				->with('date', $date)
+				->with('calendar', $calendar);
+	}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  App\Http\Requests\CalendarUpdateRequest $calendarUpdateRequest custom request
-     * @param  string  $date
-     * @return \Illuminate\Http\Response
-     */
-    public function update(CalendarUpdateRequest $calendarUpdateRequest, string $date)
-    {
-        $validated = $calendarUpdateRequest->validated();
-        $this->calendarService->updateByDate($date, $validated);
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  App\Http\Requests\CalendarUpdateRequest $calendarUpdateRequest custom request
+	 * @param  string  $date
+	 * @return \Illuminate\Http\Response
+	 */
+	public function update(CalendarUpdateRequest $calendarUpdateRequest, string $date)
+	{
+		$validated = $calendarUpdateRequest->validated();
+		$this->calendarService->updateByDate($date, $validated);
 
-        return redirect('/leave')->with('success', 'Update calendar success.');
-    }
+		return redirect('/leave')->with('success', 'Update calendar success.');
+	}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(int $id)
-    {
-        //
-    }
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function destroy(int $id)
+	{
+		//
+	}
 }

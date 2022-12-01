@@ -50,8 +50,8 @@
 						<label for="type" class="form-label">Type</label>
 						<select class="form-select" aria-label="Default select example" id="type" name="type">
 							<option value="" selected>Please select</option>
-							@foreach ($leaveTypes as $id => $leaveType)
-								<option value="{{ $id }}">{{ $leaveType['name'] }}</option>
+							@foreach ($leaveTypes as $id => $name)
+								<option value="{{ $id }}">{{ $name }}</option>
 							@endforeach
 						</select>
 						@if ($errors->has('type'))

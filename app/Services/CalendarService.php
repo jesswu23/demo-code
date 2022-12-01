@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\CalendarRepository;
 use Carbon\Carbon;
+use App\Repositories\CalendarRepository;
 
 Class CalendarService
 {
@@ -14,7 +14,7 @@ Class CalendarService
 		$this->calendarRepository = $calendarRepository;
 	}
 
-	public function getByDate(string $date)
+	public function getByDate(string $date) 
 	{
 		$date = $this->formatDate($date, "Ymd"); // The database format is YYYYMMDD
 		$calendar = $this->calendarRepository->getByDate($date);

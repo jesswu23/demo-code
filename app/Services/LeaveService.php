@@ -15,75 +15,63 @@ Class LeaveService
 	protected $leaveRepository;
 	protected $calendarRepository;
 
-	private const LEAVE_TYPE_MAPING = [
-		1 => [
-			'name'		=> '病假',
+	private const LEAVE_TYPE_MAPPING = [
+		LeaveType::SICK_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 30
 		],
-		2 => [
-			'name'		=> '事假',
+		LeaveType::PERSONAL_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 14
 		],
-		3 => [
-			'name'		=> '生理假',
+		LeaveType::MENSTRUATION_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 12
 		],
-		4 => [
-			'name'		=> '喪假',
+		LeaveType::FUNERAL_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 0
 		],
-		5 => [
-			'name'		=> '公傷病假',
+		LeaveType::WORKRELATED_SICK_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 0
 		],
-		6 => [
-			'name'		=> '產假',
+		LeaveType::MATERNITY_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 0
 		],
-		7 => [
-			'name'		=> '安胎休養假',
+		LeaveType::MATERNITY_REST_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 30
 		],
-		8 => [
-			'name'		=> '陪產假',
+		LeaveType::PATERNITY_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 7
 		],
-		9 => [
-			'name'		=> '產檢假',
+		LeaveType::PRENATAL_VISIT_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 7
 		],
-		10 => [
-			'name'		=> '家庭照顧假',
+		LeaveType::FAMILY_CARE_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 7
 		],
-		11 => [
-			'name'		=> '公假',
+		LeaveType::OFFICIAL_LEAVE => [
 			'start_date'=> '01-01',
 			'end_date'	=> '12-31',
 			'limit_day'	=> 0
 		],
-		12 => [
-			'name'		=> '特別休假',
+		LeaveType::SPECIAL_LEAVE => [
 			'start_date'=> '04-01',
 			'end_date'	=> '03-31',
 			'limit_day'	=> 12
@@ -98,8 +86,8 @@ Class LeaveService
 
 	public function create(array $params)
 	{
-		$params = $this->formatParams($params);
-		$result = $this->checkLeaveHour($params);
+		$params = self::formatParams($params);
+		$result = self::checkLeaveHour($params);
 		if(!$result) {
 			return $result;
 		}
@@ -111,8 +99,8 @@ Class LeaveService
 
 	public function update(int $id, array $params)
 	{
-		$params = $this->formatParams($params);
-		$result = $this->checkLeaveHour($params, $params['status']);
+		$params = self::formatParams($params);
+		$result = self::checkLeaveHour($params, $params['status']);
 		if(!$result) {
 			return $result;
 		}
@@ -151,7 +139,7 @@ Class LeaveService
 			$tmp['title'] = ($calendar->memo) ? $calendar->memo : '';
 
 			$date = date_create($calendar->date);
-			$tmp['start'] = date_format($date,"Y-m-d");
+			$tmp['start'] = date_format($date, "Y-m-d");
 			$tmp['color'] = '#dc3545';
 
 			$events[] = $tmp;
@@ -173,37 +161,25 @@ Class LeaveService
 	}
 
 	/**
-	 * Get leave type infomation
-	 * @return array
-	 */
-	public function getLeaveTypes()
-	{
-		return self::LEAVE_TYPE_MAPING;
-	}
-
-	/**
 	 * check leave hours
 	 * @param  array       $params
-	 * @param  int|integer $status leave approval status, default 1
+	 * @param  int|integer $status leave approval status, default 2
 	 * @return bool
 	 */
-	protected function checkLeaveHour(array $params, int $status = LeaveStatus::APPLIED)
+	protected function checkLeaveHour(array $params, int $status = LeaveStatus::PASSED)
 	{
 		// if status are reject, leave hours are not judged
 		if($status === LeaveStatus::REJECT) {
 			return true;
 		}
 
-		// get leave type
-		$learveTypes = $this->getLeaveTypes();
-		$leaveTypeInfo = $learveTypes[$params['type']];
-		$limitDays = $leaveTypeInfo['limit_day'];
+		$leaveTypeInfo = self::LEAVE_TYPE_MAPPING[$params['type']];
 
 		// get leave limit days and converted to hour
-		$limitHours = $limitDays * 8;
+		$limitHours = $leaveTypeInfo['limit_day'] * 8;
 
 		// get apply leave hour by year
-		$userYearLeaveHour = $this->getLeaveHours($params);
+		$userYearLeaveHour = self::getLeaveHours($params);
 
 		foreach ($userYearLeaveHour as $year => $applyHour) {
 			if($applyHour > $limitHours && $limitHours !== 0) {
@@ -214,18 +190,19 @@ Class LeaveService
 				$userYearLeaveHour[$year] = 0; // default passed leave hours are 0
 			}
 
-			$startDate = $year . '-' . $leaveTypeInfo['start_date'] ;
-			$endDate = $year . '-' . $leaveTypeInfo['end_date'] ;
+			$endYear = ($params['type'] === LeaveType::SPECIAL_LEAVE) ? ($year + 1) : $year;
+			$startDate = $year . '-' . $leaveTypeInfo['start_date'];
+			$endDate = $endYear . '-' . $leaveTypeInfo['end_date'];
 
 			// get the number of leave hours passed by the user
-			$userLeaveHours = $this->leaveRepository->getLeaveTypeTotalHourByUser($params['user_id'], $params['type'], $startDate, $endDate);
+			$userLeaveHours = $this->leaveRepository->getLeaveTypeTotalHourByUser($params['user_id'], $params['type'], $startDate, $endDate, LeaveStatus::PASSED);
 
 			if($userLeaveHours->isNotEmpty()) {
 				foreach ($userLeaveHours as $key => $userLeaveHour) {
 					// Get Applied Leave Hours
 					$params['start_at'] = $userLeaveHour['start_at'];
 					$params['end_at'] = $userLeaveHour['end_at'];
-					$getLeaveHours = $this->getLeaveHours($params);
+					$getLeaveHours = self::getLeaveHours($params);
 
 					if($getLeaveHours) {
 						$userYearLeaveHour[$year] += $getLeaveHours[$year];
@@ -249,9 +226,7 @@ Class LeaveService
 	 */
 	protected function getLeaveHours(array $params)
 	{
-		$type = $params['type'];
-		$learveTypes = $this->getLeaveTypes();
-		$leaveTypeInfo = $learveTypes[$type];
+		$leaveTypeInfo = self::LEAVE_TYPE_MAPPING[$params['type']];
 
 		$startDatetimeObject = Carbon::create($params['start_at']);
 		$endDatetimeObject = Carbon::create($params['end_at']);
@@ -265,7 +240,7 @@ Class LeaveService
 		$endMonth = $endDatetimeObject->month;
 		$endHour = $endDatetimeObject->hour;
 
-		$calculationStartDateObject = Carbon::create(($startYear-1) . '-' . $leaveTypeInfo['start_date']);
+		$calculationStartDateObject = Carbon::create(($startYear - 1) . '-' . $leaveTypeInfo['start_date']);
 		$calculationStartDateMonth = $calculationStartDateObject->month;
 		$calculationEndDateObject = Carbon::create($endYear . '-' . $leaveTypeInfo['end_date']);
 		$calculationEndDateMonth = $calculationEndDateObject->month;
@@ -282,29 +257,28 @@ Class LeaveService
 				$tmp['year'] = $year;
 
 				if($year === $startYear && $year === $endYear) {
-					if($type === LeaveType::SPECIAL_LEAVE) {
+					if($params['type'] === LeaveType::SPECIAL_LEAVE) {
 						// The start month is less than the calculation start month and the end month is less than or equal to the calculation end month
 						if($startMonth < $calculationStartDateMonth && $endMonth <= $calculationEndDateMonth) {
+							$tmp['year'] = ($year - 1);
 							$tmp['start_date'] = $startDate;
 							$tmp['end_date'] = $endDate;
 
 							$dateRange[] = $tmp;
 						} else if($startMonth < $calculationStartDateMonth && $endMonth > $calculationEndDateMonth) {
 							// The start month is less than the calculation start month
+							$tmp['year'] = ($year - 1);
 							$tmp['start_date'] = $startDate;
 							$tmp['end_date'] = $year . str_replace('-', '', $leaveTypeInfo['end_date']);
 
 							$dateRange[] = $tmp;
 
 							// End month is greater than calculation end month
-							$tmp['year'] = ($year+1);
 							$tmp['start_date'] = $year . str_replace('-', '', $leaveTypeInfo['start_date']);
 							$tmp['end_date'] = $endDate;
 
 							$dateRange[] = $tmp;
-
 						} else if($startMonth >= $calculationStartDateMonth) { // The start month is greater than or equal to the calculation start month
-							$tmp['year'] = ($year+1);
 							$tmp['start_date'] = $startDate;
 							$tmp['end_date'] = $endDate;
 
@@ -317,10 +291,9 @@ Class LeaveService
 						$dateRange[] = $tmp;
 					}
 				} else {
-					if($type === LeaveType::SPECIAL_LEAVE) {
+					if($params['type'] === LeaveType::SPECIAL_LEAVE) {
 						if($startMonth >= $calculationStartDateMonth && $endMonth <= $calculationEndDateMonth) {
-
-							$tmp['year'] = ($year !== $startYear && $year === $endYear) ? ($year-1) : $year;
+							$tmp['year'] = ($year !== $startYear && $year === $endYear) ? $year : ($year + 1);
 							$tmp['start_date'] = $startDate;
 							$tmp['end_date'] = $endDate;
 
@@ -345,7 +318,6 @@ Class LeaveService
 			foreach ($dateRange as $key => $date) {
 				$startDate = $date['start_date'];
 				$endDate = $date['end_date'];
-				$year = $date['year'];
 
 				// get calendar list
 				$calendarList = $this->calendarRepository->getCalendarListByDateRange($startDate, $endDate);
@@ -356,9 +328,9 @@ Class LeaveService
 					$day = 1; // default all day
 
 					// confirm the start date and end date of leave days
-					if(($calendar->date == $startDate) && $startHour === LeavePeriod::AFTERNOON_START_HOUR ) {
+					if(($calendar->date == $startDate) && $startHour === LeavePeriod::AFTERNOON_START_HOUR) {
 						$day = 0.5;
-					} else if(($calendar->date == $endDate) && $endHour === LeavePeriod::MORNING_END_HOUR ) {
+					} else if(($calendar->date == $endDate) && $endHour === LeavePeriod::MORNING_END_HOUR) {
 						$day = 0.5;
 					}
 
@@ -368,7 +340,7 @@ Class LeaveService
 					}
 				}
 
-				$workTotalHours[$year] = $workdays * 8;
+				$workTotalHours[$date['year']] = $workdays * 8;
 			}
 		}
 
@@ -398,13 +370,13 @@ Class LeaveService
 	 */
 	protected function formatParams(array $params)
 	{
-		$combineDateTime = $this->combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
+		$combineDateTime = self::combineDateTime($params['start_date'], $params['start_time'], $params['end_date'], $params['end_time']);
 
 		$params['start_at']	= $combineDateTime['start_datetime'];
 		$params['end_at']	= $combineDateTime['end_datetime'];
 		$params['user_id']	= Auth::user()->id;
 
-		$totalHours = $this->getLeaveHours($params);
+		$totalHours = self::getLeaveHours($params);
 		$params['hours']	= array_sum($totalHours);
 
 		return $params;
